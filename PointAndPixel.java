@@ -21,10 +21,8 @@ class PointAndPixel extends JFrame implements ActionListener {
 	  
     height = (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight();
     width = (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-    
-		setSize(600, 600);
 	
-		JScrollPane scroller = new JScrollPane(new PixelCanvas());  
+		JScrollPane scroller = new JScrollPane(new PixelCanvas(this));  
     getContentPane().add(scroller);
 		
 		setupMenu();
