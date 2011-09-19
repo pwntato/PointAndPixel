@@ -22,7 +22,8 @@ class PointAndPixel extends JFrame implements ActionListener {
     height = (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight();
     width = (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth();
 	
-		JScrollPane scroller = new JScrollPane(new PixelCanvas(this));  
+	  PixelCanvas canvas = new PixelCanvas(this);
+		JScrollPane scroller = new JScrollPane(canvas);  
     getContentPane().add(scroller);
 		
 		setupMenu();
@@ -31,7 +32,7 @@ class PointAndPixel extends JFrame implements ActionListener {
 		setVisible(true);
 		setResizable(false);      // worry about scaling later
 		
-		tools = new ToolsWindow();
+		tools = new ToolsWindow(canvas);
 		JDialog d2 = new JDialog(tools);
     d2.setModalityType(Dialog.ModalityType.MODELESS);
     tools.setLocationRelativeTo(null);

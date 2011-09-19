@@ -72,6 +72,14 @@ public class PixelCanvas extends JPanel {
       }
     }
   }
+  
+  public Color getSelectedColor() {
+    return selectedColor;
+  }
+  
+  public void setSelectedColor(Color color) {
+    selectedColor = color;
+  }
 
   class MAdapter extends MouseAdapter 
 	{

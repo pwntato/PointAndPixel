@@ -9,23 +9,71 @@ import java.awt.event.*;
 
 import java.io.*;
 
-public class ToolsWindow extends JFrame implements ActionListener {
+public class ToolsWindow extends JFrame implements ActionListener, DocumentListener {
 
   private Container container = null;
-
-  public ToolsWindow() {
+  private PixelCanvas canvas = null;
+  
+  private JTextField red = null;
+  private JTextField green = null;
+  private JTextField blue = null;
+  private JTextField alpha = null;
+  
+  private JPanel colorSample = null;
+  
+  public ToolsWindow(PixelCanvas canvas) {
     super("Pixel Tools");
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     
-    setSize(150, 200);
+    this.canvas = canvas;
+    
+    setSize(200, 400);
 		setResizable(false);
     setAlwaysOnTop(true);
     
     container = getContentPane();
-		container.setLayout(new GridLayout(2, 1));
+		container.setLayout(new GridLayout(7, 1));
 		
 		container.add(setupButton("Draw Pixel"));
 		container.add(setupButton("Copy Color"));
+		
+		Color color = canvas.getSelectedColor();
+		
+		JPanel pRed = new JPanel(new GridLayout(1, 2));
+		pRed.add(new JLabel("  Red:"));
+		red = new JTextField(3);
+		red.setText(String.valueOf(color.getRed()));
+		red.getDocument().addDocumentListener(this);
+		pRed.add(red);
+		container.add(pRed);
+		
+		JPanel pGreen = new JPanel(new GridLayout(1, 2));
+		pGreen.add(new JLabel("Green:"));
+		green = new JTextField(3);
+		green.setText(String.valueOf(color.getGreen()));
+		green.getDocument().addDocumentListener(this);
+		pGreen.add(green);
+		container.add(pGreen);
+		
+		JPanel pBlue = new JPanel(new GridLayout(1, 2));
+		pBlue.add(new JLabel(" Blue:"));
+		blue = new JTextField(3);
+		blue.setText(String.valueOf(color.getBlue()));
+		blue.getDocument().addDocumentListener(this);
+		pBlue.add(blue);
+		container.add(pBlue);
+		
+		JPanel pAlpha = new JPanel(new GridLayout(1, 2));
+		pAlpha.add(new JLabel("Alpha:"));
+		alpha = new JTextField(3);
+		alpha.setText(String.valueOf(color.getAlpha()));
+		alpha.getDocument().addDocumentListener(this);
+		pAlpha.add(alpha);
+		container.add(pAlpha);
+		
+		colorSample = new JPanel();
+		colorSample.setBackground(color);
+		container.add(colorSample);
     
     setVisible(true);
   }
@@ -38,6 +86,26 @@ public class ToolsWindow extends JFrame implements ActionListener {
       JOptionPane.showMessageDialog(this, "Unhandled action: " + e.getActionCommand());
     }
   }
+  
+  public void insertUpdate(DocumentEvent e) {
+    try {
+      int redPart = Integer.parseInt(red.getText());
+      int greenPart = Integer.parseInt(green.getText());
+      int bluePart = Integer.parseInt(blue.getText());
+      int alphaPart = Integer.parseInt(alpha.getText());
+      
+      Color color = new Color(redPart, greenPart, bluePart, alphaPart);
+      
+      colorSample.setBackground(color);
+      
+      canvas.setSelectedColor(color);
+    }
+    catch (Exception ex) { ex.printStackTrace(); }
+  }
+    
+  public void removeUpdate(DocumentEvent e) {}
+  
+  public void changedUpdate(DocumentEvent e) {}
   
   public JButton setupButton(String buttonText) {
 		JButton button = new JButton(buttonText);
