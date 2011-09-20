@@ -31,6 +31,8 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		setResizable(false);
     setAlwaysOnTop(true);
     
+		setupMenu();
+    
     container = getContentPane();
 		container.setLayout(new GridLayout(7, 1));
 		
@@ -106,6 +108,42 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   public void removeUpdate(DocumentEvent e) {}
   
   public void changedUpdate(DocumentEvent e) {}
+  
+  public void setupMenu() {
+    JMenuBar menuBar = new JMenuBar();
+		
+		JMenu fileMenu = new JMenu("File");
+		menuBar.add(fileMenu);
+				
+		fileMenu.add(setupMenu("New"));	
+		fileMenu.add(setupMenu("Open"));	
+		fileMenu.addSeparator();
+		
+		fileMenu.add(setupMenu("Save"));	
+		fileMenu.add(setupMenu("Save As"));	
+		fileMenu.addSeparator();		
+		
+		fileMenu.add(setupMenu("Import Image"));	
+		fileMenu.add(setupMenu("Export Image"));		
+		fileMenu.addSeparator();	
+		
+		fileMenu.add(setupMenu("Exit"));
+		
+		JMenu keyMenu = new JMenu("Settings");
+		menuBar.add(keyMenu);
+		
+		keyMenu.add(setupMenu("Pixel Size"));	
+		keyMenu.add(setupMenu("Canvas Size"));	
+		
+		setJMenuBar(menuBar);
+  }
+  
+  public JMenuItem setupMenu(String menuText) {
+		JMenuItem menuItem = new JMenuItem(menuText);
+		menuItem.setActionCommand(menuText);
+		menuItem.addActionListener(this);
+		return menuItem;
+  }
   
   public JButton setupButton(String buttonText) {
 		JButton button = new JButton(buttonText);
