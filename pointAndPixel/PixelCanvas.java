@@ -80,6 +80,10 @@ public class PixelCanvas extends JPanel {
   public void setSelectedColor(Color color) {
     selectedColor = color;
   }
+  
+  public Color[][] getGrid() {
+    return grid;
+  }
 
   class MAdapter extends MouseAdapter 
 	{

@@ -21,6 +21,10 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   
   private JPanel colorSample = null;
   
+  private File saveFile = null;
+  
+  private JFileChooser fc = null;
+  
   public ToolsWindow(PixelCanvas canvas) {
     super("Pixel Tools");
     setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -30,6 +34,9 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     setSize(200, 400);
 		setResizable(false);
     setAlwaysOnTop(true);
+    
+    saveFile = new File("drawing.pixel");
+    fc = new JFileChooser();
     
 		setupMenu();
     
@@ -81,7 +88,22 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   }
   
   public void actionPerformed(ActionEvent e) {
-    if ("Exit".equals(e.getActionCommand())) {
+    if ("Save".equals(e.getActionCommand())) {
+      fc.resetChoosableFileFilters();
+      fc.removeChoosableFileFilter(fc.getAcceptAllFileFilter());
+      ImgFilter filter = new ImgFilter();
+      filter.addExtension("pixel");
+      filter.setDescription("Point and Pixel File (*.pixel)");
+      fc.setFileFilter(filter);
+      fc.setSelectedFile(saveFile);
+      int returnVal = fc.showSaveDialog(this);
+      
+      if (returnVal == JFileChooser.APPROVE_OPTION) {
+        saveFile = fc.getSelectedFile();
+        savePixelFile(saveFile);
+      }
+    }
+    else if ("Exit".equals(e.getActionCommand())) {
       System.exit(0);
     }
     else {
@@ -116,11 +138,8 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		menuBar.add(fileMenu);
 				
 		fileMenu.add(setupMenu("New"));	
-		fileMenu.add(setupMenu("Open"));	
-		fileMenu.addSeparator();
-		
+		fileMenu.add(setupMenu("Open"));		
 		fileMenu.add(setupMenu("Save"));	
-		fileMenu.add(setupMenu("Save As"));	
 		fileMenu.addSeparator();		
 		
 		fileMenu.add(setupMenu("Import Image"));	
@@ -136,6 +155,29 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		keyMenu.add(setupMenu("Canvas Size"));	
 		
 		setJMenuBar(menuBar);
+  }
+  
+  public void savePixelFile(File file) {
+    Writer output = null;    
+    
+    try {      
+      Color[][] grid = canvas.getGrid();
+      output = new BufferedWriter(new FileWriter(file));
+      
+      for (int column = 0; column < grid.length; column++) {
+        for (int row = 0; row < grid[column].length; row++) {
+          if (grid[column][row] != null) {
+            Color c = grid[column][row];
+            output.write("{x:" + column + ",y:" + row + ",r:" + c.getRed() + ",g:" + c.getGreen() + ",b:" + c.getBlue() + ",a:" + c.getAlpha() + "},");
+          }
+        }
+      }
+    } catch (IOException e) { System.out.println(e); }
+    finally {
+      if (output != null) {
+        try { output.close(); } catch (Exception e) {}
+      }
+    }
   }
   
   public JMenuItem setupMenu(String menuText) {
