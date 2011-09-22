@@ -89,18 +89,19 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   
   public void actionPerformed(ActionEvent e) {
     if ("Save".equals(e.getActionCommand())) {
-      fc.resetChoosableFileFilters();
-      fc.removeChoosableFileFilter(fc.getAcceptAllFileFilter());
-      ImgFilter filter = new ImgFilter();
-      filter.addExtension("pixel");
-      filter.setDescription("Point and Pixel File (*.pixel)");
-      fc.setFileFilter(filter);
-      fc.setSelectedFile(saveFile);
-      int returnVal = fc.showSaveDialog(this);
+      int returnVal = selectPixelFile();
       
       if (returnVal == JFileChooser.APPROVE_OPTION) {
         saveFile = fc.getSelectedFile();
         savePixelFile(saveFile);
+      }
+    }
+    else if ("Open".equals(e.getActionCommand())) {
+      int returnVal = selectPixelFile();
+      
+      if (returnVal == JFileChooser.APPROVE_OPTION) {
+        saveFile = fc.getSelectedFile();
+        loadPixelFile(saveFile);
       }
     }
     else if ("Exit".equals(e.getActionCommand())) {
@@ -109,6 +110,17 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     else {
       JOptionPane.showMessageDialog(this, "Unhandled action: " + e.getActionCommand());
     }
+  }
+  
+  public int selectPixelFile() {
+    fc.resetChoosableFileFilters();
+    fc.removeChoosableFileFilter(fc.getAcceptAllFileFilter());
+    ImgFilter filter = new ImgFilter();
+    filter.addExtension("pixel");
+    filter.setDescription("Point and Pixel File (*.pixel)");
+    fc.setFileFilter(filter);
+    fc.setSelectedFile(saveFile);
+    return fc.showSaveDialog(this);
   }
   
   public void insertUpdate(DocumentEvent e) {
@@ -157,6 +169,29 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		setJMenuBar(menuBar);
   }
   
+  public void loadPixelFile(File file) {
+    BufferedReader input = null; 
+    
+    try {      
+      input = new BufferedReader(new FileReader(file));
+      String json = "";
+      String line = "";
+      
+      while ((line = input.readLine()) != null) {
+        json += line;
+      }
+      
+      System.out.println(json);
+      //Color[][] grid = new Color[widthPixels][heightPixels];
+      
+    } catch (IOException e) { System.out.println(e); }
+    finally {
+      if (input != null) {
+        try { input.close(); } catch (Exception e) {}
+      }
+    }
+  }
+  
   public void savePixelFile(File file) {
     Writer output = null;    
     
@@ -164,11 +199,11 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       Color[][] grid = canvas.getGrid();
       output = new BufferedWriter(new FileWriter(file));
 
-      output.write("{");
-      output.write("\"pixel_size\":" + canvas.getPixelSize());
-      output.write(",\"height_pixels\":" + canvas.getHeightPixels());
-      output.write(",\"width_pixels\":" + canvas.getWidthPixels());
-      output.write(",\"pixels\":[");
+      output.write("{\n");
+      output.write("  \"pixel_size\":" + canvas.getPixelSize());
+      output.write(",\n  \"height_pixels\":" + canvas.getHeightPixels());
+      output.write(",\n  \"width_pixels\":" + canvas.getWidthPixels());
+      output.write(",\n  \"pixels\":[");
       
       boolean firstPixel = true;
       
@@ -180,12 +215,12 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
               output.write(",");
             }
             firstPixel = false;
-            output.write("{\"x\":" + column + ",\"y\":" + row + ",\"r\":" + c.getRed() + ",\"g\":" + c.getGreen() + ",\"b\":" + c.getBlue() + ",\"a\":" + c.getAlpha() + "}");
+            output.write("\n    {\"x\":" + column + ",\"y\":" + row + ",\"r\":" + c.getRed() + ",\"g\":" + c.getGreen() + ",\"b\":" + c.getBlue() + ",\"a\":" + c.getAlpha() + "}");
           }
         }
       }
       
-      output.write("]}");
+      output.write("\n  ]\n}");
     } catch (IOException e) { System.out.println(e); }
     finally {
       if (output != null) {
