@@ -84,6 +84,30 @@ public class PixelCanvas extends JPanel {
   public Color[][] getGrid() {
     return grid;
   }
+  
+  public int getPixelSize() {
+    return pixelSize;
+  }
+  
+  public void setPixelSize(int pixelSize) {
+    this.pixelSize = pixelSize;
+  }
+  
+  public int getHeightPixels() {
+    return heightPixels;
+  }
+  
+  public void setHeightPixels(int heightPixels) {
+    this.heightPixels = heightPixels;
+  }
+  
+  public int getWidthPixels() {
+    return widthPixels;
+  }
+  
+  public void setWidthPixels(int widthPixels) {
+    this.widthPixels = widthPixels;
+  }
 
   class MAdapter extends MouseAdapter 
 	{

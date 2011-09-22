@@ -163,15 +163,29 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     try {      
       Color[][] grid = canvas.getGrid();
       output = new BufferedWriter(new FileWriter(file));
+
+      output.write("{");
+      output.write("\"pixel_size\":" + canvas.getPixelSize());
+      output.write(",\"height_pixels\":" + canvas.getHeightPixels());
+      output.write(",\"width_pixels\":" + canvas.getWidthPixels());
+      output.write(",\"pixels\":[");
+      
+      boolean firstPixel = true;
       
       for (int column = 0; column < grid.length; column++) {
         for (int row = 0; row < grid[column].length; row++) {
           if (grid[column][row] != null) {
             Color c = grid[column][row];
-            output.write("{x:" + column + ",y:" + row + ",r:" + c.getRed() + ",g:" + c.getGreen() + ",b:" + c.getBlue() + ",a:" + c.getAlpha() + "},");
+            if (!firstPixel) {
+              output.write(",");
+            }
+            firstPixel = false;
+            output.write("{\"x\":" + column + ",\"y\":" + row + ",\"r\":" + c.getRed() + ",\"g\":" + c.getGreen() + ",\"b\":" + c.getBlue() + ",\"a\":" + c.getAlpha() + "}");
           }
         }
       }
+      
+      output.write("]}");
     } catch (IOException e) { System.out.println(e); }
     finally {
       if (output != null) {
