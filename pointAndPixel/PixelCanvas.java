@@ -85,6 +85,11 @@ public class PixelCanvas extends JPanel {
     return grid;
   }
   
+  public void setGrid(Color[][] grid) {
+    this.grid = grid;
+    repaint();
+  }
+  
   public int getPixelSize() {
     return pixelSize;
   }
