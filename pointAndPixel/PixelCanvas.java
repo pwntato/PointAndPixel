@@ -32,7 +32,7 @@ public class PixelCanvas extends JPanel {
     setBackground(Color.WHITE);
     resetGrid();
     
-    frame.setSize((int)((widthPixels + 0.5) * pixelSize), (int)((heightPixels + 0.5) * pixelSize));
+    resizeWindow();
     
     setVisible(true);
   }
@@ -87,6 +87,10 @@ public class PixelCanvas extends JPanel {
     }
     
     repaint();
+  }
+  
+  public void resizeWindow() {
+    frame.setSize((int)((widthPixels + 0.5) * pixelSize), (int)((heightPixels + 2) * pixelSize));
   }
   
   public Color getSelectedColor() {

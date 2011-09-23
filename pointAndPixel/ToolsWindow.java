@@ -11,11 +11,11 @@ import java.io.*;
 
 import java.util.regex.*;
 
-public class ToolsWindow extends JFrame implements ActionListener, DocumentListener {
+public class ToolsWindow extends JFrame implements ActionListener, DocumentListener, FocusListener {
 
-  public static final int DEFAULT_PIXEL_SIZE = 10;
-  public static final int DEFAULT_WIDTH_PIXELS = 60;
-  public static final int DEFAULT_HEIGHT_PIXELS = 60;
+  public static final int DEFAULT_PIXEL_SIZE = 20;
+  public static final int DEFAULT_WIDTH_PIXELS = 20;
+  public static final int DEFAULT_HEIGHT_PIXELS = 20;
 
   private Container container = null;
   private PixelCanvas canvas = null;
@@ -39,7 +39,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     
     setSize(200, 400);
 		setResizable(false);
-    setAlwaysOnTop(true);
+    //setAlwaysOnTop(true);
     
     saveFile = new File("drawing.pixel");
     fc = new JFileChooser();
@@ -59,6 +59,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		red = new JTextField(3);
 		red.setText(String.valueOf(color.getRed()));
 		red.getDocument().addDocumentListener(this);
+		red.addFocusListener(this);
 		pRed.add(red);
 		container.add(pRed);
 		
@@ -67,6 +68,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		green = new JTextField(3);
 		green.setText(String.valueOf(color.getGreen()));
 		green.getDocument().addDocumentListener(this);
+		green.addFocusListener(this);
 		pGreen.add(green);
 		container.add(pGreen);
 		
@@ -75,6 +77,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		blue = new JTextField(3);
 		blue.setText(String.valueOf(color.getBlue()));
 		blue.getDocument().addDocumentListener(this);
+		blue.addFocusListener(this);
 		pBlue.add(blue);
 		container.add(pBlue);
 		
@@ -83,6 +86,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		alpha = new JTextField(3);
 		alpha.setText(String.valueOf(color.getAlpha()));
 		alpha.getDocument().addDocumentListener(this);
+		alpha.addFocusListener(this);
 		pAlpha.add(alpha);
 		container.add(pAlpha);
 		
@@ -117,6 +121,14 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       canvas.setWidthPixels(DEFAULT_WIDTH_PIXELS);
       canvas.resetGrid();
     }
+    else if ("Pixel Size".equals(e.getActionCommand())) {
+      String response = JOptionPane.showInputDialog(null, "Set Pixel Size", "Pixel Size", JOptionPane.QUESTION_MESSAGE);
+      canvas.setPixelSize(Integer.parseInt(response));
+      
+      canvas.resizeWindow();
+      
+      repaint();
+    }
     else if ("Exit".equals(e.getActionCommand())) {
       System.exit(0);
     }
@@ -124,6 +136,12 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       JOptionPane.showMessageDialog(this, "Unhandled action: " + e.getActionCommand());
     }
   }
+  
+  public void focusGained(FocusEvent e) {
+    ((JTextField)e.getComponent()).selectAll();
+  }
+
+  public void focusLost(FocusEvent e) {}
   
   public int selectPixelFile() {
     fc.resetChoosableFileFilters();
@@ -177,7 +195,8 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		menuBar.add(keyMenu);
 		
 		keyMenu.add(setupMenu("Pixel Size"));	
-		keyMenu.add(setupMenu("Canvas Size"));	
+		keyMenu.add(setupMenu("Canvas Width"));	
+		keyMenu.add(setupMenu("Canvas Height"));	
 		
 		setJMenuBar(menuBar);
   }
@@ -212,7 +231,9 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       widthPixels = getValue(json, "width_pixels");
       pixelSize = getValue(json, "pixel_size");
       
-      grid = new Color[widthPixels][heightPixels];      
+      canvas.setPixelSize(pixelSize);
+      grid = new Color[widthPixels][heightPixels];  
+      canvas.resizeWindow();    
       
       Pattern pixels = Pattern.compile("\\{\\S*\\}");
       Matcher matcher = pixels.matcher(json);
