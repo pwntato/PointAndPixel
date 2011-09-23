@@ -99,7 +99,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   
   public void actionPerformed(ActionEvent e) {
     if ("Save".equals(e.getActionCommand())) {
-      int returnVal = selectPixelFile();
+      int returnVal = selectPixelFile(false);
       
       if (returnVal == JFileChooser.APPROVE_OPTION) {
         saveFile = fc.getSelectedFile();
@@ -107,7 +107,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       }
     }
     else if ("Open".equals(e.getActionCommand())) {
-      int returnVal = selectPixelFile();
+      int returnVal = selectPixelFile(true);
       
       if (returnVal == JFileChooser.APPROVE_OPTION) {
         saveFile = fc.getSelectedFile();
@@ -129,6 +129,24 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       
       repaint();
     }
+    else if ("Canvas Width".equals(e.getActionCommand())) {
+      String response = JOptionPane.showInputDialog(null, "Set Width", "Width in Pixels", JOptionPane.QUESTION_MESSAGE);
+      canvas.setWidthPixels(Integer.parseInt(response));
+      
+      canvas.resizeGrid();
+      canvas.resizeWindow();
+      
+      repaint();
+    }
+    else if ("Canvas Height".equals(e.getActionCommand())) {
+      String response = JOptionPane.showInputDialog(null, "Set Height", "Height in Pixels", JOptionPane.QUESTION_MESSAGE);
+      canvas.setHeightPixels(Integer.parseInt(response));
+      
+      canvas.resizeGrid();
+      canvas.resizeWindow();
+      
+      repaint();
+    }
     else if ("Exit".equals(e.getActionCommand())) {
       System.exit(0);
     }
@@ -143,7 +161,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 
   public void focusLost(FocusEvent e) {}
   
-  public int selectPixelFile() {
+  public int selectPixelFile(boolean open) {
     fc.resetChoosableFileFilters();
     fc.removeChoosableFileFilter(fc.getAcceptAllFileFilter());
     ImgFilter filter = new ImgFilter();
@@ -151,7 +169,13 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     filter.setDescription("Point and Pixel File (*.pixel)");
     fc.setFileFilter(filter);
     fc.setSelectedFile(saveFile);
-    return fc.showSaveDialog(this);
+    
+    if (open) {
+      return fc.showOpenDialog(this);
+    }
+    else {
+      return fc.showSaveDialog(this);
+    }
   }
   
   public void insertUpdate(DocumentEvent e) {

@@ -89,6 +89,19 @@ public class PixelCanvas extends JPanel {
     repaint();
   }
   
+  public void resizeGrid() {
+    Color[][] oldGrid = grid;
+    grid = new Color[widthPixels][heightPixels];
+    
+    for (int column=0; column<Math.min(widthPixels, oldGrid.length); column++) {
+      for (int row=0; row<Math.min(heightPixels, oldGrid[0].length); row++) {
+        grid[column][row] = oldGrid[column][row];
+      }
+    }
+    
+    repaint();
+  }
+  
   public void resizeWindow() {
     frame.setSize((int)((widthPixels + 0.5) * pixelSize), (int)((heightPixels + 2) * pixelSize));
   }
