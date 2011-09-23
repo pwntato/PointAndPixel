@@ -13,6 +13,10 @@ import java.util.regex.*;
 
 public class ToolsWindow extends JFrame implements ActionListener, DocumentListener {
 
+  public static final int DEFAULT_PIXEL_SIZE = 10;
+  public static final int DEFAULT_WIDTH_PIXELS = 60;
+  public static final int DEFAULT_HEIGHT_PIXELS = 60;
+
   private Container container = null;
   private PixelCanvas canvas = null;
   
@@ -105,6 +109,13 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
         saveFile = fc.getSelectedFile();
         loadPixelFile(saveFile);
       }
+    }
+    else if ("New".equals(e.getActionCommand())) {
+      saveFile = new File("drawing.pixel");
+      canvas.setPixelSize(DEFAULT_PIXEL_SIZE);
+      canvas.setHeightPixels(DEFAULT_HEIGHT_PIXELS);
+      canvas.setWidthPixels(DEFAULT_WIDTH_PIXELS);
+      canvas.resetGrid();
     }
     else if ("Exit".equals(e.getActionCommand())) {
       System.exit(0);

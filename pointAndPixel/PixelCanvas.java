@@ -15,9 +15,9 @@ public class PixelCanvas extends JPanel {
 
   private boolean gridOn = true;
   
-  private int pixelSize = 10;   // pixels are square
-  private int heightPixels = 60;
-  private int widthPixels = 60;
+  private int pixelSize = ToolsWindow.DEFAULT_PIXEL_SIZE;   // pixels are square
+  private int heightPixels = ToolsWindow.DEFAULT_WIDTH_PIXELS;
+  private int widthPixels = ToolsWindow.DEFAULT_HEIGHT_PIXELS;
   
   private Color selectedColor = new Color(0, 0, 0, 255);
   
@@ -30,6 +30,7 @@ public class PixelCanvas extends JPanel {
     setFocusable(true);
     
     setBackground(Color.WHITE);
+    resetGrid();
     
     frame.setSize((int)((widthPixels + 0.5) * pixelSize), (int)((heightPixels + 0.5) * pixelSize));
     
@@ -49,16 +50,6 @@ public class PixelCanvas extends JPanel {
     super.paint(g);
     Graphics2D g2d = (Graphics2D)g;
     
-    if (gridOn) {
-      for (int x = 0; x <= widthPixels * pixelSize; x += pixelSize) {
-        g2d.drawLine(x, 0, x, heightPixels * pixelSize);
-      }
-      
-      for (int y = 0; y <= heightPixels * pixelSize; y += pixelSize) {
-        g2d.drawLine(0, y, widthPixels * pixelSize, y);
-      }
-    }
-    
     for (int column = 0; column < widthPixels; column++) {
       for (int row = 0; row < heightPixels; row++) {
         if (grid[column][row] != null) {
@@ -71,6 +62,31 @@ public class PixelCanvas extends JPanel {
         }
       }
     }
+    
+    if (gridOn) {
+      for (int x = 0; x <= widthPixels * pixelSize; x += pixelSize) {
+        g2d.drawLine(x, 0, x, heightPixels * pixelSize);
+      }
+      
+      for (int y = 0; y <= heightPixels * pixelSize; y += pixelSize) {
+        g2d.drawLine(0, y, widthPixels * pixelSize, y);
+      }
+    }
+  }
+  
+  public void resetGrid() {
+    Color background = new Color(255, 255, 255, 255);
+    grid = new Color[widthPixels][heightPixels];
+    
+    repaint();
+    
+    for (int column=0; column<widthPixels; column++) {
+      for (int row=0; row<heightPixels; row++) {
+        grid[column][row] = background;
+      }
+    }
+    
+    repaint();
   }
   
   public Color getSelectedColor() {
