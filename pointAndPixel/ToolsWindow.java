@@ -171,13 +171,22 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		setJMenuBar(menuBar);
   }
   
+  public int getValue(String json, String valueName) {
+    int retVal = -1;
+    Pattern pattern = Pattern.compile("\"" + valueName + "\":(\\d+)");
+    Matcher matcher = pattern.matcher(json);
+    if (matcher.find()) {
+      retVal = Integer.parseInt(matcher.group(1));
+    }
+    return retVal;
+  }
+  
   public void loadPixelFile(File file) {
     BufferedReader input = null; 
     Color[][] grid = null;
     
     try {      
       input = new BufferedReader(new FileReader(file));
-      Matcher matcher = null;
       String line = "";
       String json = "";
       int heightPixels = 0;
@@ -188,73 +197,23 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
         json += line;
       }
       
-      Pattern height = Pattern.compile("\"height_pixels\":(\\d+),");
-      matcher = height.matcher(json);
-      if (matcher.find()) {
-        heightPixels = Integer.parseInt(matcher.group(1));
-      }
-      
-      Pattern width = Pattern.compile("\"width_pixels\":(\\d+),");
-      matcher = width.matcher(json);
-      if (matcher.find()) {
-        widthPixels = Integer.parseInt(matcher.group(1));
-      }
-      
-      Pattern size = Pattern.compile("\"pixel_size\":(\\d+),");
-      matcher = size.matcher(json);
-      if (matcher.find()) {
-        pixelSize = Integer.parseInt(matcher.group(1));
-      }
+      heightPixels = getValue(json, "height_pixels");
+      widthPixels = getValue(json, "width_pixels");
+      pixelSize = getValue(json, "pixel_size");
       
       grid = new Color[widthPixels][heightPixels];      
       
       Pattern pixels = Pattern.compile("\\{\\S*\\}");
-      matcher = pixels.matcher(json);
-      Pattern x = Pattern.compile("\"x\":(\\d+)");
-      Pattern y = Pattern.compile("\"y\":(\\d+)");
-      Pattern r = Pattern.compile("\"r\":(\\d+)");
-      Pattern g = Pattern.compile("\"g\":(\\d+)");
-      Pattern b = Pattern.compile("\"b\":(\\d+)");
-      Pattern a = Pattern.compile("\"a\":(\\d+)");
-      Matcher pixMatcher = null;
+      Matcher matcher = pixels.matcher(json);
       while (matcher.find()) {
         String pixel = matcher.group();
-        int xVal = 0;
-        int yVal = 0;
-        int rVal = 0;
-        int gVal = 0;
-        int bVal = 0; 
-        int aVal = 0;
         
-        pixMatcher = x.matcher(pixel);
-        if (pixMatcher.find()) {
-          xVal = Integer.parseInt(pixMatcher.group(1));
-        }
-        
-        pixMatcher = y.matcher(pixel);
-        if (pixMatcher.find()) {
-          yVal = Integer.parseInt(pixMatcher.group(1));
-        }
-        
-        pixMatcher = r.matcher(pixel);
-        if (pixMatcher.find()) {
-          rVal = Integer.parseInt(pixMatcher.group(1));
-        }
-        
-        pixMatcher = g.matcher(pixel);
-        if (pixMatcher.find()) {
-          gVal = Integer.parseInt(pixMatcher.group(1));
-        }
-        
-        pixMatcher = b.matcher(pixel);
-        if (pixMatcher.find()) {
-          bVal = Integer.parseInt(pixMatcher.group(1));
-        }
-        
-        pixMatcher = a.matcher(pixel);
-        if (pixMatcher.find()) {
-          aVal = Integer.parseInt(pixMatcher.group(1));
-        }
+        int xVal = getValue(pixel, "x");
+        int yVal = getValue(pixel, "y");
+        int rVal = getValue(pixel, "r");
+        int gVal = getValue(pixel, "g");
+        int bVal = getValue(pixel, "b"); 
+        int aVal = getValue(pixel, "a");
         
         grid[xVal][yVal] = new Color(rVal, gVal, bVal, aVal);
       }
