@@ -6,6 +6,9 @@ import javax.swing.event.*;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.*;
+
+import javax.imageio.*;
 
 import java.io.*;
 
@@ -41,7 +44,6 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		setResizable(false);
     //setAlwaysOnTop(true);
     
-    saveFile = new File("drawing.pixel");
     fc = new JFileChooser();
     
 		setupMenu();
@@ -99,7 +101,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   
   public void actionPerformed(ActionEvent e) {
     if ("Save".equals(e.getActionCommand())) {
-      int returnVal = selectPixelFile(false);
+      int returnVal = selectPixelFile(false, saveFile);
       
       if (returnVal == JFileChooser.APPROVE_OPTION) {
         saveFile = fc.getSelectedFile();
@@ -107,7 +109,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       }
     }
     else if ("Open".equals(e.getActionCommand())) {
-      int returnVal = selectPixelFile(true);
+      int returnVal = selectPixelFile(true, saveFile);
       
       if (returnVal == JFileChooser.APPROVE_OPTION) {
         saveFile = fc.getSelectedFile();
@@ -120,6 +122,18 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       canvas.setHeightPixels(DEFAULT_HEIGHT_PIXELS);
       canvas.setWidthPixels(DEFAULT_WIDTH_PIXELS);
       canvas.resetGrid();
+    }
+    else if ("Export Image".equals(e.getActionCommand())) {
+      String defaultName = "drawing.png";
+      if (saveFile != null) {
+        defaultName = saveFile.getName();
+        defaultName = defaultName.substring(0, defaultName.lastIndexOf(".")) + ".png";
+      }
+      int returnVal = selectImageFile(false, new File(defaultName));
+      
+      if (returnVal == JFileChooser.APPROVE_OPTION) {
+        exportImage(fc.getSelectedFile());
+      }
     }
     else if ("Pixel Size".equals(e.getActionCommand())) {
       String response = JOptionPane.showInputDialog(null, "Set Pixel Size", "Pixel Size", JOptionPane.QUESTION_MESSAGE);
@@ -161,14 +175,31 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 
   public void focusLost(FocusEvent e) {}
   
-  public int selectPixelFile(boolean open) {
+  public int selectPixelFile(boolean open, File file) {
     fc.resetChoosableFileFilters();
     fc.removeChoosableFileFilter(fc.getAcceptAllFileFilter());
     ImgFilter filter = new ImgFilter();
     filter.addExtension("pixel");
     filter.setDescription("Point and Pixel File (*.pixel)");
     fc.setFileFilter(filter);
-    fc.setSelectedFile(saveFile);
+    fc.setSelectedFile(file);
+    
+    if (open) {
+      return fc.showOpenDialog(this);
+    }
+    else {
+      return fc.showSaveDialog(this);
+    }
+  }
+  
+  public int selectImageFile(boolean open, File file) {
+    fc.resetChoosableFileFilters();
+    fc.removeChoosableFileFilter(fc.getAcceptAllFileFilter());
+    ImgFilter filter = new ImgFilter();
+    filter.addExtension("png");
+    filter.setDescription("PNG File (*.png)");
+    fc.setFileFilter(filter);
+    fc.setSelectedFile(file);
     
     if (open) {
       return fc.showOpenDialog(this);
@@ -275,7 +306,9 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       }
       
       canvas.setGrid(grid);
-    } catch (IOException e) { System.out.println(e); }
+    } catch (IOException e) {
+      JOptionPane.showMessageDialog(this, "Unable to load drawing");
+    }
     finally {
       if (input != null) {
         try { input.close(); } catch (Exception e) {}
@@ -312,12 +345,33 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       }
       
       output.write("\n  ]\n}");
-    } catch (IOException e) { System.out.println(e); }
+    } catch (IOException e) { 
+      JOptionPane.showMessageDialog(this, "Unable to save drawing");
+    }
     finally {
       if (output != null) {
         try { output.close(); } catch (Exception e) {}
       }
     }
+  }
+  
+  public void exportImage(File file) {
+    BufferedImage bi = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_ARGB);
+    Graphics g = bi.createGraphics();
+    
+    boolean gridOn = canvas.isGridOn();
+    canvas.setGridOn(false);
+    
+    canvas.paint(g);
+    
+    try {
+      ImageIO.write(bi, "PNG", file);
+    } 
+    catch(Exception e) {
+      JOptionPane.showMessageDialog(this, "Unable to export image");
+    }
+    
+    canvas.setGridOn(gridOn);
   }
   
   public JMenuItem setupMenu(String menuText) {

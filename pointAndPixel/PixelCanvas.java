@@ -102,6 +102,14 @@ public class PixelCanvas extends JPanel {
     repaint();
   }
   
+  public boolean isGridOn() {
+    return gridOn;
+  }
+  
+  public void setGridOn(boolean gridOn) {
+    this.gridOn = gridOn;
+  }
+  
   public void resizeWindow() {
     frame.setSize((int)((widthPixels + 0.5) * pixelSize), (int)((heightPixels + 2) * pixelSize));
   }
@@ -131,12 +139,20 @@ public class PixelCanvas extends JPanel {
     this.pixelSize = pixelSize;
   }
   
+  public int getHeight() {
+    return heightPixels * pixelSize;
+  }
+  
   public int getHeightPixels() {
     return heightPixels;
   }
   
   public void setHeightPixels(int heightPixels) {
     this.heightPixels = heightPixels;
+  }
+  
+  public int getWidth() {
+    return widthPixels * pixelSize;
   }
   
   public int getWidthPixels() {
