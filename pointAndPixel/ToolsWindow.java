@@ -122,6 +122,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       canvas.setHeightPixels(DEFAULT_HEIGHT_PIXELS);
       canvas.setWidthPixels(DEFAULT_WIDTH_PIXELS);
       canvas.resetGrid();
+      canvas.resizeWindow();
     }
     else if ("Import Image".equals(e.getActionCommand())) {
       int returnVal = selectImageFile(true, null);

@@ -8,29 +8,23 @@ import java.awt.event.*;
 import java.io.*;
 import pointAndPixel.*;
 
-class PointAndPixel extends JFrame {
+class PointAndPixel {
 
   private int height = 0;
   private int width = 0;
 
   private JFrame tools = null;
+  private CanvasFrame canvas = null;
   
   public PointAndPixel() {
-    super("Point and Pixel - Draw Old Timey Pixel Art");
-	  setDefaultCloseOperation(EXIT_ON_CLOSE);
-	  
-    height = (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-    width = (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-	
-	  PixelCanvas canvas = new PixelCanvas(this);
-		JScrollPane scroller = new JScrollPane(canvas);  
-    getContentPane().add(scroller);
+    canvas = new CanvasFrame();
+		JDialog d1 = new JDialog(canvas);
+    d1.setModalityType(Dialog.ModalityType.MODELESS);
+    canvas.setLocationRelativeTo(null);
+    canvas.setLocation(0, 80);
+		canvas.setVisible(true);
 		
-		setLocationRelativeTo(null);
-		setVisible(true);
-		setResizable(false);      // worry about scaling later
-		
-		tools = new ToolsWindow(canvas);
+		tools = new ToolsWindow(canvas.getCanvas());
 		JDialog d2 = new JDialog(tools);
     d2.setModalityType(Dialog.ModalityType.MODELESS);
     tools.setLocationRelativeTo(null);
