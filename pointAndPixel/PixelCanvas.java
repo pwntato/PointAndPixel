@@ -11,23 +11,14 @@ import java.io.*;
 
 public class PixelCanvas extends JPanel implements FocusListener {
 
-  public enum ToolState {
-    DRAW,
-    DROPPER
-  }
-  
   private JFrame frame = null;
   private ToolsWindow toolsWindow = null;
-  
-  private ToolState toolState = ToolState.DRAW;
 
   private boolean gridOn = true;
   
   private int pixelSize = ToolsWindow.DEFAULT_PIXEL_SIZE;   // pixels are square
   private int heightPixels = ToolsWindow.DEFAULT_WIDTH_PIXELS;
   private int widthPixels = ToolsWindow.DEFAULT_HEIGHT_PIXELS;
-  
-  private Color selectedColor = new Color(0, 0, 0, 255);
   
   private Color[][] grid = new Color[widthPixels][heightPixels];
 
@@ -47,12 +38,8 @@ public class PixelCanvas extends JPanel implements FocusListener {
     setVisible(true);
   }
   
-  public void colorPixelFromClick(int x, int y) {
-    colorPixel((int)(x / pixelSize), (int)(y / pixelSize));
-  }
-  
   public void colorPixel(int column, int row) {
-    grid[column][row] = selectedColor;
+    grid[column][row] = toolsWindow.getSelectedColor();
     repaint();
   }
   
@@ -118,14 +105,6 @@ public class PixelCanvas extends JPanel implements FocusListener {
 
   public void focusLost(FocusEvent e) {}
   
-  public ToolState getToolState() {
-    return toolState;
-  }
-  
-  public void setToolState(ToolState toolState) {
-    this.toolState = toolState;
-  }
-  
   public boolean isGridOn() {
     return gridOn;
   }
@@ -136,14 +115,6 @@ public class PixelCanvas extends JPanel implements FocusListener {
   
   public void resizeWindow() {
     frame.setSize((int)((widthPixels + 0.5) * pixelSize), (int)((heightPixels + 2) * pixelSize));
-  }
-  
-  public Color getSelectedColor() {
-    return selectedColor;
-  }
-  
-  public void setSelectedColor(Color color) {
-    selectedColor = color;
   }
   
   public Color[][] getGrid() {
@@ -196,14 +167,15 @@ public class PixelCanvas extends JPanel implements FocusListener {
 	  }
 	  
     public void mousePressed(MouseEvent e) {
-      int x = e.getX();
-      int y = e.getY();
+      int column = (int)(e.getX() / pixelSize);
+      int row = (int)(e.getY() / pixelSize);
       
-      switch (canvas.getToolState()) {
+      switch (toolsWindow.getToolState()) {
         case DRAW:
-          canvas.colorPixelFromClick(x, y);
+          canvas.colorPixel(column, row);
           break;
         case DROPPER:
+          toolsWindow.setSelectedColor(canvas.getGrid()[column][row]);
           break;
       }
     }

@@ -17,6 +17,12 @@ import java.util.regex.*;
 
 public class ToolsWindow extends JFrame implements ActionListener, DocumentListener, FocusListener {
 
+  public enum ToolState {
+    DRAW,
+    DROPPER
+  }
+  
+
   public static final int DEFAULT_PIXEL_SIZE = 20;
   public static final int DEFAULT_WIDTH_PIXELS = 20;
   public static final int DEFAULT_HEIGHT_PIXELS = 20;
@@ -24,6 +30,9 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   private Container container = null;
   private ArrayList<PixelCanvas> allCanvases = null;
   private PixelCanvas canvas = null;
+  
+  private Color selectedColor = new Color(0, 0, 0, 255);
+  private ToolState toolState = ToolState.DRAW;
   
   private JTextField red = null;
   private JTextField green = null;
@@ -57,7 +66,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		container.add(setupButton("Draw Pixel"));
 		container.add(setupButton("Copy Color"));
 		
-		Color color = canvas.getSelectedColor();
+		Color color = selectedColor;
 		
 		JPanel pRed = new JPanel(new GridLayout(1, 2));
 		pRed.add(new JLabel("  Red:"));
@@ -168,10 +177,10 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       repaint();
     }
     else if ("Draw Pixel".equals(e.getActionCommand())) {
-      canvas.setToolState(PixelCanvas.ToolState.DRAW);
+      toolState = ToolState.DRAW;
     }
     else if ("Copy Color".equals(e.getActionCommand())) {
-      canvas.setToolState(PixelCanvas.ToolState.DROPPER);
+      toolState = ToolState.DROPPER;
     }
     else if ("Exit".equals(e.getActionCommand())) {
       System.exit(0);
@@ -235,11 +244,9 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       int bluePart = Integer.parseInt(blue.getText());
       int alphaPart = Integer.parseInt(alpha.getText());
       
-      Color color = new Color(redPart, greenPart, bluePart, alphaPart);
+      selectedColor = new Color(redPart, greenPart, bluePart, alphaPart);
       
-      colorSample.setBackground(color);
-      
-      canvas.setSelectedColor(color);
+      colorSample.setBackground(selectedColor);
     }
     catch (Exception ex) { ex.printStackTrace(); }
   }
@@ -485,6 +492,38 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		button.setActionCommand(buttonText);
 		button.addActionListener(this);
 		return button;
+  }
+  
+  
+  public Color getSelectedColor() {
+    return selectedColor;
+  }
+  
+  public void setSelectedColor(Color color) {
+    selectedColor = color;    
+    
+    int MASK = 0x000000ff;
+    int raw = color.getRGB();
+        
+    int alphaPart = (raw >> 24) & MASK;
+    int redPart = (raw >> 16) & MASK;
+    int greenPart = (raw >> 8) & MASK;
+    int bluePart = raw & MASK;
+  
+    red.setText(String.valueOf(redPart));
+    green.setText(String.valueOf(greenPart));
+    blue.setText(String.valueOf(bluePart));
+    alpha.setText(String.valueOf(alphaPart));
+    
+    colorSample.setBackground(selectedColor);
+  }
+  
+  public ToolState getToolState() {
+    return toolState;
+  }
+  
+  public void setToolState(ToolState toolState) {
+    this.toolState = toolState;
   }
 }
 
