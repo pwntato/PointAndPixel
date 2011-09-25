@@ -457,7 +457,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		JDialog d = new JDialog(cf);
     d.setModalityType(Dialog.ModalityType.MODELESS);
     cf.setLocationRelativeTo(this);
-    cf.setLocation(0, 80);
+    cf.setLocation(470, 100);
 		cf.setVisible(true);
 		
     canvas = cf.getCanvas();

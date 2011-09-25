@@ -20,7 +20,7 @@ class PointAndPixel {
 		JDialog d2 = new JDialog(tools);
     d2.setModalityType(Dialog.ModalityType.MODELESS);
     tools.setLocationRelativeTo(null);
-    tools.setLocation(0, 80);
+    tools.setLocation(250, 100);
 		tools.setVisible(true);
   }
   
