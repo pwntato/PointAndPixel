@@ -10,9 +10,16 @@ import java.awt.event.*;
 import java.io.*;
 
 public class PixelCanvas extends JPanel implements FocusListener {
+
+  public enum ToolState {
+    DRAW,
+    DROPPER
+  }
   
   private JFrame frame = null;
   private ToolsWindow toolsWindow = null;
+  
+  private ToolState toolState = ToolState.DRAW;
 
   private boolean gridOn = true;
   
@@ -111,6 +118,14 @@ public class PixelCanvas extends JPanel implements FocusListener {
 
   public void focusLost(FocusEvent e) {}
   
+  public ToolState getToolState() {
+    return toolState;
+  }
+  
+  public void setToolState(ToolState toolState) {
+    this.toolState = toolState;
+  }
+  
   public boolean isGridOn() {
     return gridOn;
   }
@@ -184,7 +199,13 @@ public class PixelCanvas extends JPanel implements FocusListener {
       int x = e.getX();
       int y = e.getY();
       
-      canvas.colorPixelFromClick(x, y);
+      switch (canvas.getToolState()) {
+        case DRAW:
+          canvas.colorPixelFromClick(x, y);
+          break;
+        case DROPPER:
+          break;
+      }
     }
 
     public void mouseReleased(MouseEvent e) {

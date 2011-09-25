@@ -167,6 +167,12 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       
       repaint();
     }
+    else if ("Draw Pixel".equals(e.getActionCommand())) {
+      canvas.setToolState(PixelCanvas.ToolState.DRAW);
+    }
+    else if ("Copy Color".equals(e.getActionCommand())) {
+      canvas.setToolState(PixelCanvas.ToolState.DROPPER);
+    }
     else if ("Exit".equals(e.getActionCommand())) {
       System.exit(0);
     }
@@ -457,8 +463,13 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   
   public void deleteCanvas(PixelCanvas canvas) {
     allCanvases.remove(canvas);
+    
     if (this.canvas == canvas) {
       this.canvas = null;
+    }
+    
+    if (allCanvases.size() == 0) {
+      System.exit(0);
     }
   }
   
