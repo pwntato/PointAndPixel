@@ -431,25 +431,25 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     int MASK = 0x000000ff;
     int pixelSize = canvas.getPixelSize();
     int count = 0;
-    int alpha = 0;
-    int red = 0;
-    int green = 0;
-    int blue = 0;
+    int alphaPart = 0;
+    int redPart = 0;
+    int greenPart = 0;
+    int bluePart = 0;
     
     for (int x = column * pixelSize; x < column * pixelSize + pixelSize; x++) {
       for (int y = row * pixelSize; y < row * pixelSize + pixelSize; y++) {
-        int raw = img.getRGB(x, y);
+        int[] argb = intToARGB(img.getRGB(x, y));
         
-        alpha += (raw >> 24) & MASK;
-        red += (raw >> 16) & MASK;
-        green += (raw >> 8) & MASK;
-        blue += raw & MASK;
+        alphaPart += argb[0];
+        redPart += argb[1];
+        greenPart += argb[2];
+        bluePart += argb[3];
         
         count++;
       }
     }
     
-    return new Color(red/count, green/count, blue/count, alpha/count);
+    return new Color(redPart/count, greenPart/count, bluePart/count, alphaPart/count);
   }
   
   public void newPixelCanvas() {
@@ -503,19 +503,26 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     selectedColor = color;    
     
     int MASK = 0x000000ff;
-    int raw = color.getRGB();
-        
-    int alphaPart = (raw >> 24) & MASK;
-    int redPart = (raw >> 16) & MASK;
-    int greenPart = (raw >> 8) & MASK;
-    int bluePart = raw & MASK;
+    int[] argb = intToARGB(color.getRGB());
   
-    red.setText(String.valueOf(redPart));
-    green.setText(String.valueOf(greenPart));
-    blue.setText(String.valueOf(bluePart));
-    alpha.setText(String.valueOf(alphaPart));
+    red.setText(String.valueOf(argb[1]));
+    green.setText(String.valueOf(argb[2]));
+    blue.setText(String.valueOf(argb[3]));
+    alpha.setText(String.valueOf(argb[0]));
     
     colorSample.setBackground(selectedColor);
+  }
+  
+  public static int[] intToARGB(int raw) {
+    int MASK = 0x000000ff;
+    int[] argb = new int[4];
+    
+    argb[0] = (raw >> 24) & MASK;
+    argb[1] = (raw >> 16) & MASK;
+    argb[2] = (raw >> 8) & MASK;
+    argb[3] = raw & MASK;
+    
+    return argb;
   }
   
   public ToolState getToolState() {
