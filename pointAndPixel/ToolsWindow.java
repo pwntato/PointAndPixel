@@ -11,6 +11,7 @@ import java.awt.image.*;
 import javax.imageio.*;
 
 import java.io.*;
+import java.util.*;
 
 import java.util.regex.*;
 
@@ -21,6 +22,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   public static final int DEFAULT_HEIGHT_PIXELS = 20;
 
   private Container container = null;
+  private ArrayList<PixelCanvas> allCanvases = null;
   private PixelCanvas canvas = null;
   
   private JTextField red = null;
@@ -34,15 +36,16 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   
   private JFileChooser fc = null;
   
-  public ToolsWindow(PixelCanvas canvas) {
+  public ToolsWindow() {
     super("Pixel Tools");
     setDefaultCloseOperation(EXIT_ON_CLOSE);
-    
-    this.canvas = canvas;
     
     setSize(200, 400);
 		setResizable(false);
     //setAlwaysOnTop(true);
+    
+    allCanvases = new ArrayList<PixelCanvas>();
+    newPixelCanvas();
     
     fc = new JFileChooser();
     
@@ -117,12 +120,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       }
     }
     else if ("New".equals(e.getActionCommand())) {
-      saveFile = new File("drawing.pixel");
-      canvas.setPixelSize(DEFAULT_PIXEL_SIZE);
-      canvas.setHeightPixels(DEFAULT_HEIGHT_PIXELS);
-      canvas.setWidthPixels(DEFAULT_WIDTH_PIXELS);
-      canvas.resetGrid();
-      canvas.resizeWindow();
+      newPixelCanvas();
     }
     else if ("Import Image".equals(e.getActionCommand())) {
       int returnVal = selectImageFile(true, null);
@@ -439,6 +437,29 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     }
     
     return new Color(red/count, green/count, blue/count, alpha/count);
+  }
+  
+  public void newPixelCanvas() {
+    CanvasFrame cf = new CanvasFrame(this);
+		JDialog d = new JDialog(cf);
+    d.setModalityType(Dialog.ModalityType.MODELESS);
+    cf.setLocationRelativeTo(this);
+    cf.setLocation(0, 80);
+		cf.setVisible(true);
+		
+    canvas = cf.getCanvas();
+    allCanvases.add(canvas);
+  }
+  
+  public void select(PixelCanvas canvas) {
+    this.canvas = canvas;
+  }
+  
+  public void deleteCanvas(PixelCanvas canvas) {
+    allCanvases.remove(canvas);
+    if (this.canvas == canvas) {
+      this.canvas = null;
+    }
   }
   
   public JMenuItem setupMenu(String menuText) {

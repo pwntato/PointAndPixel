@@ -9,9 +9,10 @@ import java.awt.event.*;
 
 import java.io.*;
 
-public class PixelCanvas extends JPanel {
+public class PixelCanvas extends JPanel implements FocusListener {
   
   private JFrame frame = null;
+  private ToolsWindow toolsWindow = null;
 
   private boolean gridOn = true;
   
@@ -23,11 +24,13 @@ public class PixelCanvas extends JPanel {
   
   private Color[][] grid = new Color[widthPixels][heightPixels];
 
-  public PixelCanvas(JFrame frame) {
+  public PixelCanvas(JFrame frame, ToolsWindow toolsWindow) {
     this.frame = frame;
+    this.toolsWindow = toolsWindow;
   
     addMouseListener(new MAdapter(this));
     setFocusable(true);
+    addFocusListener(this);
     
     setBackground(Color.WHITE);
     resetGrid();
@@ -101,6 +104,12 @@ public class PixelCanvas extends JPanel {
     
     repaint();
   }
+  
+  public void focusGained(FocusEvent e) {
+    toolsWindow.select(this);
+  }
+
+  public void focusLost(FocusEvent e) {}
   
   public boolean isGridOn() {
     return gridOn;

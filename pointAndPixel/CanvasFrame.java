@@ -15,17 +15,22 @@ public class CanvasFrame extends JFrame {
   private int width = 0;
   
   private PixelCanvas canvas = null;
+  private ToolsWindow toolsWindow = null;
   
-  public CanvasFrame() {
-    super("Point and Pixel - Draw Old Timey Pixel Art");
-	  setDefaultCloseOperation(EXIT_ON_CLOSE);
+  public CanvasFrame(ToolsWindow toolsWindow) {
+    super("Point and Pixel - Draw Old Timey Pixel Art");   
+    
+    this.toolsWindow = toolsWindow;
 	  
     height = (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight();
     width = (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth();
 	
-	  canvas = new PixelCanvas(this);
+	  canvas = new PixelCanvas(this, toolsWindow);
 		JScrollPane scroller = new JScrollPane(canvas);  
     getContentPane().add(scroller);
+    
+	  setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+	  addWindowListener(new WAdapter());
 		
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -34,6 +39,14 @@ public class CanvasFrame extends JFrame {
   
   public PixelCanvas getCanvas() {
     return canvas;
+  }
+  
+  private class WAdapter extends WindowAdapter { 
+    public void windowClosing(WindowEvent e) {
+      toolsWindow.deleteCanvas(canvas);
+      setVisible(false);
+      canvas = null;
+    }
   }
 }
 
