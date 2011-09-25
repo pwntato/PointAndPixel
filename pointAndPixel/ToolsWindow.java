@@ -123,6 +123,13 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       canvas.setWidthPixels(DEFAULT_WIDTH_PIXELS);
       canvas.resetGrid();
     }
+    else if ("Import Image".equals(e.getActionCommand())) {
+      int returnVal = selectImageFile(true, null);
+      
+      if (returnVal == JFileChooser.APPROVE_OPTION) {
+        importImage(fc.getSelectedFile());
+      }
+    }
     else if ("Export Image".equals(e.getActionCommand())) {
       String defaultName = "drawing.png";
       if (saveFile != null) {
@@ -197,7 +204,14 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     fc.removeChoosableFileFilter(fc.getAcceptAllFileFilter());
     ImgFilter filter = new ImgFilter();
     filter.addExtension("png");
-    filter.setDescription("PNG File (*.png)");
+    if (open) {
+      filter.addExtension("jpg");
+      filter.addExtension("jpeg");
+      filter.setDescription("Image File (*.png, *.jpg)");
+    }
+    else {
+      filter.setDescription("PNG File (*.png)");
+    }
     fc.setFileFilter(filter);
     fc.setSelectedFile(file);
     
@@ -287,6 +301,9 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       pixelSize = getValue(json, "pixel_size");
       
       canvas.setPixelSize(pixelSize);
+      canvas.setWidthPixels(widthPixels);
+      canvas.setHeightPixels(heightPixels);
+      
       grid = new Color[widthPixels][heightPixels];  
       canvas.resizeWindow();    
       
@@ -372,6 +389,55 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     }
     
     canvas.setGridOn(gridOn);
+  }
+  
+  public void importImage(File file) {
+    try {
+      BufferedImage img = ImageIO.read(file);
+      int widthPixels = img.getWidth() / canvas.getPixelSize();
+      int heightPixels = img.getHeight() / canvas.getPixelSize();
+      Color[][] grid = new Color[widthPixels][heightPixels];
+      
+      for (int column=0; column<widthPixels; column++) {
+        for (int row=0; row<heightPixels; row++) {
+          grid[column][row] = getPixelColor(img, column, row);
+        }
+      }
+      
+      canvas.setWidthPixels(widthPixels);
+      canvas.setHeightPixels(heightPixels);
+      canvas.setGrid(grid);
+      canvas.resizeWindow();
+    } 
+    catch(Exception e) {
+      e.printStackTrace();
+      JOptionPane.showMessageDialog(this, "Unable to import image");
+    }
+  }
+  
+  public Color getPixelColor(BufferedImage img, int column, int row) {
+    int MASK = 0x000000ff;
+    int pixelSize = canvas.getPixelSize();
+    int count = 0;
+    int alpha = 0;
+    int red = 0;
+    int green = 0;
+    int blue = 0;
+    
+    for (int x = column * pixelSize; x < column * pixelSize + pixelSize; x++) {
+      for (int y = row * pixelSize; y < row * pixelSize + pixelSize; y++) {
+        int raw = img.getRGB(x, y);
+        
+        alpha += (raw >> 24) & MASK;
+        red += (raw >> 16) & MASK;
+        green += (raw >> 8) & MASK;
+        blue += raw & MASK;
+        
+        count++;
+      }
+    }
+    
+    return new Color(red/count, green/count, blue/count, alpha/count);
   }
   
   public JMenuItem setupMenu(String menuText) {
