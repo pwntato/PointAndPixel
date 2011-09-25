@@ -64,12 +64,12 @@ public class PixelCanvas extends JPanel {
     }
     
     if (gridOn) {
-      for (int x = 0; x <= widthPixels * pixelSize; x += pixelSize) {
-        g2d.drawLine(x, 0, x, heightPixels * pixelSize);
+      for (int x = 0; x <= widthPixels; x++) {
+        g2d.drawLine(x * pixelSize, 0, x * pixelSize, heightPixels * pixelSize);
       }
       
-      for (int y = 0; y <= heightPixels * pixelSize; y += pixelSize) {
-        g2d.drawLine(0, y, widthPixels * pixelSize, y);
+      for (int y = 0; y <= heightPixels; y++) {
+        g2d.drawLine(0, y * pixelSize, widthPixels * pixelSize, y * pixelSize);
       }
     }
   }
