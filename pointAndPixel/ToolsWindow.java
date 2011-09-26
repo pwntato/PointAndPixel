@@ -31,6 +31,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   private ArrayList<PixelCanvas> allCanvases = null;
   private PixelCanvas canvas = null;
   
+  private Map<String, Color> defaultColors = null;
   private Color selectedColor = new Color(0, 0, 0, 255);
   private ToolState toolState = ToolState.DRAW;
   
@@ -56,6 +57,24 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     allCanvases = new ArrayList<PixelCanvas>();
     newPixelCanvas();
     
+    defaultColors = new LinkedHashMap<String, Color>();
+    
+    defaultColors.put("Black", Color.BLACK);
+		defaultColors.put("Gray", Color.GRAY);
+		defaultColors.put("Red", Color.RED);
+		defaultColors.put("Orange", new Color(240, 120, 0, 255));         // orange
+		defaultColors.put("Dark Green", new Color(0, 110, 0, 255));       // dark green
+		defaultColors.put("Dark Blue", new Color(0, 0, 128, 255));        // dark blue
+		defaultColors.put("Purple", new Color(85, 0, 128, 255));          // purple
+		
+		defaultColors.put("White", Color.WHITE);
+		defaultColors.put("Light Gray", Color.LIGHT_GRAY);
+		defaultColors.put("Magenta", Color.MAGENTA);
+		defaultColors.put("Yellow", Color.YELLOW);
+		defaultColors.put("Green", Color.GREEN);
+		defaultColors.put("Cyan", Color.CYAN);
+		defaultColors.put("Blue", Color.BLUE);
+    
     fc = new JFileChooser();
     
 		setupMenu();
@@ -66,24 +85,10 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		container.add(setupButton("Draw Pixel"));
 		container.add(setupButton("Copy Color"));
 		
-		JPanel pColors = new JPanel(new GridLayout(2, 7));
-		
-		pColors.add(setupColorButton("Black", Color.BLACK));
-		pColors.add(setupColorButton("Gray", Color.GRAY));
-		pColors.add(setupColorButton("Red", Color.RED));
-		pColors.add(setupColorButton("Orange", new Color(240, 120, 0, 255)));
-		pColors.add(setupColorButton("Dark Green", new Color(0, 110, 0, 255)));
-		pColors.add(setupColorButton("Dark Blue", new Color(0, 0, 128, 255)));
-		pColors.add(setupColorButton("Purple", new Color(85, 0, 128, 255)));
-		
-		pColors.add(setupColorButton("White", Color.WHITE));
-		pColors.add(setupColorButton("Light Gray", Color.LIGHT_GRAY));
-		pColors.add(setupColorButton("Magenta", Color.MAGENTA));
-		pColors.add(setupColorButton("Yellow", Color.YELLOW));
-		pColors.add(setupColorButton("Green", Color.GREEN));
-		pColors.add(setupColorButton("Cyan", Color.CYAN));
-		pColors.add(setupColorButton("Blue", Color.BLUE));
-		
+		JPanel pColors = new JPanel(new GridLayout(2, 7));		
+		for (String colorName: defaultColors.keySet()) {
+		  pColors.add(setupColorButton(colorName, defaultColors.get(colorName)));
+		}		
 		container.add(pColors);		
 		
 		JPanel pRed = new JPanel(new GridLayout(1, 2));
@@ -199,6 +204,9 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     }
     else if ("Copy Color".equals(e.getActionCommand())) {
       toolState = ToolState.DROPPER;
+    }
+    else if (defaultColors.keySet().contains(e.getActionCommand())) {
+      setSelectedColor(defaultColors.get(e.getActionCommand()));
     }
     else if ("Exit".equals(e.getActionCommand())) {
       System.exit(0);

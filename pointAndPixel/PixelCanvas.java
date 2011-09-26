@@ -176,6 +176,7 @@ public class PixelCanvas extends JPanel implements FocusListener {
           break;
         case DROPPER:
           toolsWindow.setSelectedColor(canvas.getGrid()[column][row]);
+          toolsWindow.setToolState(ToolsWindow.ToolState.DRAW);
           break;
       }
     }
