@@ -81,7 +81,7 @@ public class PixelCanvas extends JPanel implements FocusListener {
       for (int row=0; row<heightPixels; row++) {
         grid[column][row] = background;
       }
-    }
+    }    
     
     repaint();
   }

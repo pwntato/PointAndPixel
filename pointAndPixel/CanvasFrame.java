@@ -34,7 +34,7 @@ public class CanvasFrame extends JFrame {
 		
 		setLocationRelativeTo(null);
 		setVisible(true);
-		setResizable(false);      // worry about scaling laterS
+		setResizable(false);      // worry about scaling later
   }
   
   public PixelCanvas getCanvas() {

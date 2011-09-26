@@ -61,17 +61,35 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		setupMenu();
     
     container = getContentPane();
-		container.setLayout(new GridLayout(7, 1));
+		container.setLayout(new GridLayout(8, 1));
 		
 		container.add(setupButton("Draw Pixel"));
 		container.add(setupButton("Copy Color"));
 		
-		Color color = selectedColor;
+		JPanel pColors = new JPanel(new GridLayout(2, 7));
+		
+		pColors.add(setupColorButton("Black", Color.BLACK));
+		pColors.add(setupColorButton("Gray", Color.GRAY));
+		pColors.add(setupColorButton("Red", Color.RED));
+		pColors.add(setupColorButton("Orange", new Color(240, 120, 0, 255)));
+		pColors.add(setupColorButton("Dark Green", new Color(0, 110, 0, 255)));
+		pColors.add(setupColorButton("Dark Blue", new Color(0, 0, 128, 255)));
+		pColors.add(setupColorButton("Purple", new Color(85, 0, 128, 255)));
+		
+		pColors.add(setupColorButton("White", Color.WHITE));
+		pColors.add(setupColorButton("Light Gray", Color.LIGHT_GRAY));
+		pColors.add(setupColorButton("Magenta", Color.MAGENTA));
+		pColors.add(setupColorButton("Yellow", Color.YELLOW));
+		pColors.add(setupColorButton("Green", Color.GREEN));
+		pColors.add(setupColorButton("Cyan", Color.CYAN));
+		pColors.add(setupColorButton("Blue", Color.BLUE));
+		
+		container.add(pColors);		
 		
 		JPanel pRed = new JPanel(new GridLayout(1, 2));
 		pRed.add(new JLabel("  Red:"));
 		red = new JTextField(3);
-		red.setText(String.valueOf(color.getRed()));
+		red.setText("0");
 		red.getDocument().addDocumentListener(this);
 		red.addFocusListener(this);
 		pRed.add(red);
@@ -80,7 +98,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		JPanel pGreen = new JPanel(new GridLayout(1, 2));
 		pGreen.add(new JLabel("Green:"));
 		green = new JTextField(3);
-		green.setText(String.valueOf(color.getGreen()));
+		green.setText("0");
 		green.getDocument().addDocumentListener(this);
 		green.addFocusListener(this);
 		pGreen.add(green);
@@ -89,7 +107,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		JPanel pBlue = new JPanel(new GridLayout(1, 2));
 		pBlue.add(new JLabel(" Blue:"));
 		blue = new JTextField(3);
-		blue.setText(String.valueOf(color.getBlue()));
+		blue.setText("0");
 		blue.getDocument().addDocumentListener(this);
 		blue.addFocusListener(this);
 		pBlue.add(blue);
@@ -98,14 +116,14 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		JPanel pAlpha = new JPanel(new GridLayout(1, 2));
 		pAlpha.add(new JLabel("Alpha:"));
 		alpha = new JTextField(3);
-		alpha.setText(String.valueOf(color.getAlpha()));
+		alpha.setText("255");
 		alpha.getDocument().addDocumentListener(this);
 		alpha.addFocusListener(this);
 		pAlpha.add(alpha);
 		container.add(pAlpha);
 		
 		colorSample = new JPanel();
-		colorSample.setBackground(color);
+		colorSample.setBackground(selectedColor);
 		container.add(colorSample);
     
     setVisible(true);
@@ -494,6 +512,13 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		return button;
   }
   
+  public JButton setupColorButton(String action, Color color) {
+		JButton button = new JButton("");
+		button.setBackground(color);
+		button.setActionCommand(action);
+		button.addActionListener(this);
+		return button;
+  }
   
   public Color getSelectedColor() {
     return selectedColor;
