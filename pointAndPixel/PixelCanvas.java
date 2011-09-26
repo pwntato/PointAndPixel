@@ -30,7 +30,7 @@ public class PixelCanvas extends JPanel implements FocusListener {
     setFocusable(true);
     addFocusListener(this);
     
-    setBackground(Color.WHITE);
+    //setBackground(Color.WHITE);
     resetGrid();
     
     resizeWindow();
@@ -68,6 +68,22 @@ public class PixelCanvas extends JPanel implements FocusListener {
       for (int y = 0; y <= heightPixels; y++) {
         g2d.drawLine(0, y * pixelSize, widthPixels * pixelSize, y * pixelSize);
       }
+    }
+  }
+  
+  public void fill(int column, int row, Color clickedColor) {
+    if (column < 0 || column > widthPixels - 1 || row < 0 || row > heightPixels - 1) {
+      return;
+    }
+    else if (grid[column][row].equals(clickedColor)) {
+      grid[column][row] = toolsWindow.getSelectedColor();
+      
+      fill(column - 1, row, clickedColor);
+      fill(column + 1, row, clickedColor);
+      fill(column, row - 1, clickedColor);
+      fill(column, row + 1, clickedColor);
+      
+      repaint();
     }
   }
   
@@ -167,6 +183,9 @@ public class PixelCanvas extends JPanel implements FocusListener {
 	  }
 	  
     public void mousePressed(MouseEvent e) {
+    }
+
+    public void mouseReleased(MouseEvent e) {
       int column = (int)(e.getX() / pixelSize);
       int row = (int)(e.getY() / pixelSize);
       
@@ -178,10 +197,14 @@ public class PixelCanvas extends JPanel implements FocusListener {
           toolsWindow.setSelectedColor(canvas.getGrid()[column][row]);
           toolsWindow.setToolState(ToolsWindow.ToolState.DRAW);
           break;
+        case FILL:
+          if (!grid[column][row].equals(toolsWindow.getSelectedColor())) {
+            fill(column, row, grid[column][row]);
+          }
+          break;
+        default:
+          JOptionPane.showMessageDialog(frame, "Unhandled tool state: " + toolsWindow.getToolState());
       }
-    }
-
-    public void mouseReleased(MouseEvent e) {
     }
   }
 }

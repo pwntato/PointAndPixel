@@ -19,7 +19,8 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 
   public enum ToolState {
     DRAW,
-    DROPPER
+    DROPPER,
+    FILL
   }
   
 
@@ -80,10 +81,11 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		setupMenu();
     
     container = getContentPane();
-		container.setLayout(new GridLayout(8, 1));
+		container.setLayout(new GridLayout(9, 1));
 		
 		container.add(setupButton("Draw Pixel"));
 		container.add(setupButton("Copy Color"));
+		container.add(setupButton("Fill"));
 		
 		JPanel pColors = new JPanel(new GridLayout(2, 7));		
 		for (String colorName: defaultColors.keySet()) {
@@ -204,6 +206,9 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     }
     else if ("Copy Color".equals(e.getActionCommand())) {
       toolState = ToolState.DROPPER;
+    }
+    else if ("Fill".equals(e.getActionCommand())) {
+      toolState = ToolState.FILL;
     }
     else if (defaultColors.keySet().contains(e.getActionCommand())) {
       setSelectedColor(defaultColors.get(e.getActionCommand()));
