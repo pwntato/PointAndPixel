@@ -178,7 +178,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       }
     }
     else if ("Pixel Size".equals(e.getActionCommand())) {
-      String response = JOptionPane.showInputDialog(null, "Set Pixel Size", "Pixel Size", JOptionPane.QUESTION_MESSAGE);
+      String response = JOptionPane.showInputDialog(null, "Pixel Size", String.valueOf(canvas.getPixelSize()));
       canvas.setPixelSize(Integer.parseInt(response));
       
       canvas.resizeWindow();
@@ -186,7 +186,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       repaint();
     }
     else if ("Canvas Width".equals(e.getActionCommand())) {
-      String response = JOptionPane.showInputDialog(null, "Set Width", "Width in Pixels", JOptionPane.QUESTION_MESSAGE);
+      String response = JOptionPane.showInputDialog(null,  "Width in Pixels", String.valueOf(canvas.getWidthPixels()));
       canvas.setWidthPixels(Integer.parseInt(response));
       
       canvas.resizeGrid();
@@ -195,7 +195,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       repaint();
     }
     else if ("Canvas Height".equals(e.getActionCommand())) {
-      String response = JOptionPane.showInputDialog(null, "Set Height", "Height in Pixels", JOptionPane.QUESTION_MESSAGE);
+      String response = JOptionPane.showInputDialog(null, "Height in Pixels", String.valueOf(canvas.getHeightPixels()));
       canvas.setHeightPixels(Integer.parseInt(response));
       
       canvas.resizeGrid();
