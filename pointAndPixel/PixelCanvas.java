@@ -76,7 +76,8 @@ public class PixelCanvas extends JPanel implements FocusListener {
     if (column < 0 || column > widthPixels - 1 || row < 0 || row > heightPixels - 1) {
       return;
     }
-    else if (grid[column][row].equals(clickedColor)) {
+    else if ((grid[column][row] == null && clickedColor == null) 
+          || (grid[column][row] != null && grid[column][row].equals(clickedColor))) {
       grid[column][row] = toolsWindow.getSelectedColor();
       
       fill(column - 1, row, clickedColor);
@@ -208,7 +209,7 @@ public class PixelCanvas extends JPanel implements FocusListener {
           toolsWindow.setToolState(ToolsWindow.ToolState.DRAW);
           break;
         case FILL:
-          if (!grid[column][row].equals(toolsWindow.getSelectedColor())) {
+          if (!toolsWindow.getSelectedColor().equals(grid[column][row])) {
             fill(column, row, grid[column][row]);
           }
           break;
