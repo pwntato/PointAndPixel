@@ -162,7 +162,12 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       int returnVal = selectImageFile(true, null);
       
       if (returnVal == JFileChooser.APPROVE_OPTION) {
-        importImage(fc.getSelectedFile());
+        String response = JOptionPane.showInputDialog(null, "Pixel size", String.valueOf(canvas.getHeightPixels()));
+      
+        if (response != null) {
+          canvas.setPixelSize(Integer.parseInt(response));
+          importImage(fc.getSelectedFile());
+        }
       }
     }
     else if ("Export Image".equals(e.getActionCommand())) {
@@ -179,29 +184,38 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     }
     else if ("Pixel Size".equals(e.getActionCommand())) {
       String response = JOptionPane.showInputDialog(null, "Pixel Size", String.valueOf(canvas.getPixelSize()));
-      canvas.setPixelSize(Integer.parseInt(response));
       
-      canvas.resizeWindow();
-      
-      repaint();
+      if (response != null) {
+        canvas.setPixelSize(Integer.parseInt(response));
+        
+        canvas.resizeWindow();
+        
+        repaint();
+      }
     }
     else if ("Canvas Width".equals(e.getActionCommand())) {
       String response = JOptionPane.showInputDialog(null,  "Width in Pixels", String.valueOf(canvas.getWidthPixels()));
-      canvas.setWidthPixels(Integer.parseInt(response));
       
-      canvas.resizeGrid();
-      canvas.resizeWindow();
-      
-      repaint();
+      if (response != null) {
+        canvas.setWidthPixels(Integer.parseInt(response));
+        
+        canvas.resizeGrid();
+        canvas.resizeWindow();
+        
+        repaint();
+      }
     }
     else if ("Canvas Height".equals(e.getActionCommand())) {
       String response = JOptionPane.showInputDialog(null, "Height in Pixels", String.valueOf(canvas.getHeightPixels()));
-      canvas.setHeightPixels(Integer.parseInt(response));
       
-      canvas.resizeGrid();
-      canvas.resizeWindow();
-      
-      repaint();
+      if (response != null) {
+        canvas.setHeightPixels(Integer.parseInt(response));
+        
+        canvas.resizeGrid();
+        canvas.resizeWindow();
+        
+        repaint();
+      }
     }
     else if ("Draw Pixel".equals(e.getActionCommand())) {
       toolState = ToolState.DRAW;
