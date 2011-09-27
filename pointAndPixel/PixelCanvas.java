@@ -15,6 +15,7 @@ public class PixelCanvas extends JPanel implements FocusListener {
   private ToolsWindow toolsWindow = null;
 
   private boolean gridOn = true;
+  private boolean gridExportOn = false;
   
   private int pixelSize = ToolsWindow.DEFAULT_PIXEL_SIZE;   // pixels are square
   private int heightPixels = ToolsWindow.DEFAULT_WIDTH_PIXELS;
@@ -127,6 +128,15 @@ public class PixelCanvas extends JPanel implements FocusListener {
   
   public void setGridOn(boolean gridOn) {
     this.gridOn = gridOn;
+    repaint();
+  }
+  
+  public boolean isGridExportOn() {
+    return gridExportOn;
+  }
+  
+  public void setGridExportOn(boolean gridExportOn) {
+    this.gridExportOn = gridExportOn;
   }
   
   public void resizeWindow() {

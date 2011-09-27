@@ -22,7 +22,6 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     DROPPER,
     FILL
   }
-  
 
   public static final int DEFAULT_PIXEL_SIZE = 20;
   public static final int DEFAULT_WIDTH_PIXELS = 20;
@@ -41,6 +40,9 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   private JTextField blue = null;
   private JTextField alpha = null;
   
+  private JCheckBoxMenuItem gridOn = null;
+  private JCheckBoxMenuItem gridExportOn = null;
+  
   private JPanel colorSample = null;
   
   private File saveFile = null;
@@ -54,9 +56,6 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     setSize(200, 400);
 		setResizable(false);
     //setAlwaysOnTop(true);
-    
-    allCanvases = new ArrayList<PixelCanvas>();
-    newPixelCanvas();
     
     defaultColors = new LinkedHashMap<String, Color>();
     
@@ -134,6 +133,9 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		container.add(colorSample);
     
     setVisible(true);
+    
+    allCanvases = new ArrayList<PixelCanvas>();
+    newPixelCanvas();
   }
   
   public void actionPerformed(ActionEvent e) {
@@ -209,6 +211,12 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     }
     else if ("Fill".equals(e.getActionCommand())) {
       toolState = ToolState.FILL;
+    }
+    else if ("Show grid".equals(e.getActionCommand())) {
+      canvas.setGridOn(gridOn.isSelected());
+    }
+    else if ("Show grid in export".equals(e.getActionCommand())) {
+      canvas.setGridExportOn(gridExportOn.isSelected());
     }
     else if (defaultColors.keySet().contains(e.getActionCommand())) {
       setSelectedColor(defaultColors.get(e.getActionCommand()));
@@ -309,7 +317,18 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		keyMenu.add(setupMenu("Pixel Size"));	
 		keyMenu.add(setupMenu("Canvas Width"));	
 		keyMenu.add(setupMenu("Canvas Height"));	
+		fileMenu.addSeparator();	
 		
+		gridOn = new JCheckBoxMenuItem("Show grid", true);
+		gridOn.setActionCommand("Show grid");
+		gridOn.addActionListener(this);
+		keyMenu.add(gridOn);
+		
+		gridExportOn = new JCheckBoxMenuItem("Show grid in export", false);
+		gridExportOn.setActionCommand("Show grid in export");
+		gridExportOn.addActionListener(this);
+		keyMenu.add(gridExportOn);
+				
 		setJMenuBar(menuBar);
   }
   
@@ -420,7 +439,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     Graphics g = bi.createGraphics();
     
     boolean gridOn = canvas.isGridOn();
-    canvas.setGridOn(false);
+    canvas.setGridOn(canvas.isGridExportOn());
     
     canvas.paint(g);
     
@@ -497,6 +516,8 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   
   public void select(PixelCanvas canvas) {
     this.canvas = canvas;
+    gridOn.setSelected(canvas.isGridOn());
+    gridExportOn.setSelected(canvas.isGridExportOn());
   }
   
   public void deleteCanvas(PixelCanvas canvas) {
