@@ -358,7 +358,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   
   public void loadPixelFile(File file) {
     BufferedReader input = null; 
-    Color[][] grid = null;
+    Pixel[][] grid = null;
     
     try {      
       input = new BufferedReader(new FileReader(file));
@@ -380,7 +380,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       canvas.setWidthPixels(widthPixels);
       canvas.setHeightPixels(heightPixels);
       
-      grid = new Color[widthPixels][heightPixels];  
+      grid = new Pixel[widthPixels][heightPixels];  
       canvas.resizeWindow();    
       
       Pattern pixels = Pattern.compile("\\{\\S*\\}");
@@ -395,7 +395,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
         int bVal = getValue(pixel, "b"); 
         int aVal = getValue(pixel, "a");
         
-        grid[xVal][yVal] = new Color(rVal, gVal, bVal, aVal);
+        grid[xVal][yVal] = new Pixel(new Color(rVal, gVal, bVal, aVal));
       }
       
       canvas.setGrid(grid);
@@ -413,7 +413,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     Writer output = null;    
     
     try {      
-      Color[][] grid = canvas.getGrid();
+      Pixel[][] grid = canvas.getGrid();
       output = new BufferedWriter(new FileWriter(file));
 
       output.write("{\n");
@@ -427,7 +427,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       for (int column = 0; column < grid.length; column++) {
         for (int row = 0; row < grid[column].length; row++) {
           if (grid[column][row] != null) {
-            Color c = grid[column][row];
+            Color c = grid[column][row].getColor();
             if (!firstPixel) {
               output.write(",");
             }
@@ -472,11 +472,11 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       BufferedImage img = ImageIO.read(file);
       int widthPixels = img.getWidth() / canvas.getPixelSize();
       int heightPixels = img.getHeight() / canvas.getPixelSize();
-      Color[][] grid = new Color[widthPixels][heightPixels];
+      Pixel[][] grid = new Pixel[widthPixels][heightPixels];
       
       for (int column=0; column<widthPixels; column++) {
         for (int row=0; row<heightPixels; row++) {
-          grid[column][row] = getPixelColor(img, column, row);
+          grid[column][row] = new Pixel(getPixelColor(img, column, row));
         }
       }
       
