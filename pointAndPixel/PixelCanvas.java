@@ -239,7 +239,7 @@ public class PixelCanvas extends JPanel implements FocusListener {
           }
           break;
         case SELECT:
-          grid[column][row].setSelected(true);
+          grid[column][row].setSelected(!grid[column][row].isSelected());
           repaint();
           break;
         default:
