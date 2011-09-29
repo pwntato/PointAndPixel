@@ -16,6 +16,7 @@ public class PixelCanvas extends JPanel implements FocusListener {
 
   private boolean gridOn = true;
   private boolean gridExportOn = false;
+  private boolean showSelected = true;
   
   private int pixelSize = ToolsWindow.DEFAULT_PIXEL_SIZE;   // pixels are square
   private int heightPixels = ToolsWindow.DEFAULT_WIDTH_PIXELS;
@@ -52,8 +53,14 @@ public class PixelCanvas extends JPanel implements FocusListener {
       for (int row = 0; row < heightPixels; row++) {
         if (grid[column][row] != null) {
           Color c = g2d.getColor();
+          Color pixelColor = grid[column][row].getColor();
           
-          g2d.setColor(grid[column][row].getColor());
+          if (showSelected && grid[column][row].isSelected()) {
+            int[] colorParts = ToolsWindow.intToARGB(pixelColor.getRGB());
+            pixelColor = new Color(colorParts[1], colorParts[2], colorParts[3], 170);
+          }
+          
+          g2d.setColor(pixelColor);
           g2d.fillRect(column * pixelSize, row * pixelSize, pixelSize, pixelSize);
           
           g2d.setColor(c);
@@ -111,6 +118,16 @@ public class PixelCanvas extends JPanel implements FocusListener {
     for (int column=0; column<Math.min(widthPixels, oldGrid.length); column++) {
       for (int row=0; row<Math.min(heightPixels, oldGrid[0].length); row++) {
         grid[column][row].setColor(oldGrid[column][row].getColor());
+      }
+    }
+    
+    repaint();
+  }
+  
+  public void deselectAll() {
+    for (int column = 0; column < widthPixels; column++) {
+      for (int row = 0; row < heightPixels; row++) {
+        grid[column][row].setSelected(false);
       }
     }
     
@@ -184,6 +201,14 @@ public class PixelCanvas extends JPanel implements FocusListener {
   public void setWidthPixels(int widthPixels) {
     this.widthPixels = widthPixels;
   }
+  
+  public boolean isShowSelected() {
+    return showSelected;
+  }
+  
+  public void setShowSelected(boolean showSelected) {
+    this.showSelected = showSelected;
+  }
 
   class MAdapter extends MouseAdapter 
 	{
@@ -212,6 +237,10 @@ public class PixelCanvas extends JPanel implements FocusListener {
           if (!toolsWindow.getSelectedColor().equals(grid[column][row].getColor())) {
             fill(column, row, grid[column][row].getColor());
           }
+          break;
+        case SELECT:
+          grid[column][row].setSelected(true);
+          repaint();
           break;
         default:
           JOptionPane.showMessageDialog(frame, "Unhandled tool state: " + toolsWindow.getToolState());

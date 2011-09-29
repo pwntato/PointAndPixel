@@ -20,7 +20,8 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   public enum ToolState {
     DRAW,
     DROPPER,
-    FILL
+    FILL,
+    SELECT
   }
 
   public static final int DEFAULT_PIXEL_SIZE = 20;
@@ -80,11 +81,12 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		setupMenu();
     
     container = getContentPane();
-		container.setLayout(new GridLayout(9, 1));
+		container.setLayout(new GridLayout(10, 1));
 		
 		container.add(setupButton("Draw Pixel"));
 		container.add(setupButton("Copy Color"));
 		container.add(setupButton("Fill"));
+		container.add(setupButton("Select Pixels"));
 		
 		JPanel pColors = new JPanel(new GridLayout(2, 7));		
 		for (String colorName: defaultColors.keySet()) {
@@ -218,13 +220,19 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       }
     }
     else if ("Draw Pixel".equals(e.getActionCommand())) {
+      canvas.deselectAll();
       toolState = ToolState.DRAW;
     }
     else if ("Copy Color".equals(e.getActionCommand())) {
+      canvas.deselectAll();
       toolState = ToolState.DROPPER;
     }
     else if ("Fill".equals(e.getActionCommand())) {
+      canvas.deselectAll();
       toolState = ToolState.FILL;
+    }
+    else if ("Select Pixels".equals(e.getActionCommand())) {
+      toolState = ToolState.SELECT;
     }
     else if ("Show grid".equals(e.getActionCommand())) {
       canvas.setGridOn(gridOn.isSelected());
@@ -455,7 +463,11 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     boolean gridOn = canvas.isGridOn();
     canvas.setGridOn(canvas.isGridExportOn());
     
+    canvas.setShowSelected(false);
+    
     canvas.paint(g);
+    
+    canvas.setShowSelected(true);
     
     try {
       ImageIO.write(bi, "PNG", file);
