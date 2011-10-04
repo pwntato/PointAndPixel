@@ -22,7 +22,14 @@ public class PixelCanvas extends JPanel implements FocusListener {
   private int heightPixels = ToolsWindow.DEFAULT_WIDTH_PIXELS;
   private int widthPixels = ToolsWindow.DEFAULT_HEIGHT_PIXELS;
   
-  private Pixel[][] grid = new Pixel[widthPixels][heightPixels];
+  private Color[][] grid = new Color[widthPixels][heightPixels];
+  
+  private int selectedX = -1;
+  private int selectedY = -1;
+  private int selectedX1 = -1;
+  private int selectedY1 = -1;
+  private int selectedX2 = -1;
+  private int selectedY2 = -1;  
 
   public PixelCanvas(JFrame frame, ToolsWindow toolsWindow) {
     this.frame = frame;
@@ -41,7 +48,7 @@ public class PixelCanvas extends JPanel implements FocusListener {
   }
   
   public void colorPixel(int column, int row) {
-    grid[column][row].setColor(toolsWindow.getSelectedColor());
+    grid[column][row] = toolsWindow.getSelectedColor();
     repaint();
   }
   
@@ -53,11 +60,14 @@ public class PixelCanvas extends JPanel implements FocusListener {
       for (int row = 0; row < heightPixels; row++) {
         if (grid[column][row] != null) {
           Color c = g2d.getColor();
-          Color pixelColor = grid[column][row].getColor();
+          Color pixelColor = grid[column][row];
           
-          if (showSelected && grid[column][row].isSelected()) {
-            int[] colorParts = ToolsWindow.intToARGB(pixelColor.getRGB());
-            pixelColor = new Color(colorParts[1], colorParts[2], colorParts[3], 170);
+          if (selectedX1 >= 0 && selectedY1 >= 0 && selectedX2 >= 0 && selectedY2 >= 0) {
+            if ((column >= Math.min(selectedX1, selectedX2) && column <= Math.max(selectedX1, selectedX2)) 
+                && (row >= Math.min(selectedY1, selectedY2) && row <= Math.max(selectedY1, selectedY2))) {
+              int[] colorParts = ToolsWindow.intToARGB(pixelColor.getRGB());
+              pixelColor = new Color(colorParts[1], colorParts[2], colorParts[3], 128);
+            }
           }
           
           g2d.setColor(pixelColor);
@@ -84,8 +94,8 @@ public class PixelCanvas extends JPanel implements FocusListener {
       return;
     }
     else if ((grid[column][row] == null && clickedColor == null) 
-          || (grid[column][row] != null && grid[column][row].getColor().equals(clickedColor))) {
-      grid[column][row].setColor(toolsWindow.getSelectedColor());
+          || (grid[column][row] != null && grid[column][row].equals(clickedColor))) {
+      grid[column][row] = toolsWindow.getSelectedColor();
       
       fill(column - 1, row, clickedColor);
       fill(column + 1, row, clickedColor);
@@ -98,13 +108,13 @@ public class PixelCanvas extends JPanel implements FocusListener {
   
   public void resetGrid() {
     Color background = new Color(255, 255, 255, 255);
-    grid = new Pixel[widthPixels][heightPixels];
+    grid = new Color[widthPixels][heightPixels];
     
     repaint();
     
     for (int column=0; column<widthPixels; column++) {
       for (int row=0; row<heightPixels; row++) {
-        grid[column][row] = new Pixel(background);
+        grid[column][row] = background;
       }
     }    
     
@@ -112,24 +122,56 @@ public class PixelCanvas extends JPanel implements FocusListener {
   }
   
   public void resizeGrid() {
-    Pixel[][] oldGrid = grid;
-    grid = new Pixel[widthPixels][heightPixels];
+    Color[][] oldGrid = grid;
+    grid = new Color[widthPixels][heightPixels];
     
     for (int column=0; column<Math.min(widthPixels, oldGrid.length); column++) {
       for (int row=0; row<Math.min(heightPixels, oldGrid[0].length); row++) {
-        grid[column][row].setColor(oldGrid[column][row].getColor());
+        grid[column][row] = oldGrid[column][row];
       }
     }
     
     repaint();
   }
   
-  public void deselectAll() {
-    for (int column = 0; column < widthPixels; column++) {
-      for (int row = 0; row < heightPixels; row++) {
-        grid[column][row].setSelected(false);
+  public Color[][] getSelected() {
+    if ((selectedX1 < 0 && selectedY1 < 0) && (selectedX2 < 0 && selectedY2 < 0)) {
+      return null;
+    }
+    
+    Color[][] selected = new Color[Math.abs(selectedX2 - selectedX1) + 2][Math.abs(selectedY2 - selectedY1) + 2];
+    
+    for (int x = Math.min(selectedX1, selectedX2); x <= Math.max(selectedX1, selectedX2); x++) {
+      for (int y = Math.min(selectedY1, selectedY2); y <= Math.max(selectedY1, selectedY2); y++) {
+        selected[x - Math.min(selectedX1, selectedX2)][y - Math.min(selectedY1, selectedY2)] = grid[x][y];
       }
     }
+    
+    return selected;
+  }
+  
+  public void pasteSelected(Color[][] selected) {
+    if (selectedX < 0 && selectedY < 0) {
+      return;
+    }
+    
+    for (int x = 0; x < selected.length - 1; x++) {
+      for (int y = 0; y < selected[x].length - 1; y++) {
+        if (selectedX + x < widthPixels && selectedY + y < heightPixels) {
+          grid[selectedX + x][selectedY + y] = selected[x][y];
+        }
+      }
+    }
+    
+    clearSelected();
+    repaint();
+  }
+  
+  public void clearSelected() {
+    selectedX1 = -1;
+    selectedY1 = -1;
+    selectedX2 = -1;
+    selectedY2 = -1;
     
     repaint();
   }
@@ -161,11 +203,11 @@ public class PixelCanvas extends JPanel implements FocusListener {
     frame.setSize((int)((widthPixels + 0.5) * pixelSize), (int)((heightPixels + 2) * pixelSize));
   }
   
-  public Pixel[][] getGrid() {
+  public Color[][] getGrid() {
     return grid;
   }
   
-  public void setGrid(Pixel[][] grid) {
+  public void setGrid(Color[][] grid) {
     this.grid = grid;
     repaint();
   }
@@ -209,6 +251,22 @@ public class PixelCanvas extends JPanel implements FocusListener {
   public void setShowSelected(boolean showSelected) {
     this.showSelected = showSelected;
   }
+  
+  public int getSelectedX() {
+    return selectedX;
+  }
+  
+  public void setSelectedX(int x) {
+    selectedX = x;
+  }
+  
+  public int getSelectedY() {
+    return selectedY;
+  }
+  
+  public void setSelectedY(int y) {
+    selectedY = y;
+  }
 
   class MAdapter extends MouseAdapter 
 	{
@@ -225,21 +283,37 @@ public class PixelCanvas extends JPanel implements FocusListener {
       int column = (int)(e.getX() / pixelSize);
       int row = (int)(e.getY() / pixelSize);
       
+      canvas.setSelectedX(column);
+      canvas.setSelectedY(row);
+      
       switch (toolsWindow.getToolState()) {
         case DRAW:
           canvas.colorPixel(column, row);
           break;
         case DROPPER:
-          toolsWindow.setSelectedColor(canvas.getGrid()[column][row].getColor());
+          toolsWindow.setSelectedColor(canvas.getGrid()[column][row]);
           toolsWindow.setToolState(ToolsWindow.ToolState.DRAW);
           break;
         case FILL:
-          if (!toolsWindow.getSelectedColor().equals(grid[column][row].getColor())) {
-            fill(column, row, grid[column][row].getColor());
+          if (!toolsWindow.getSelectedColor().equals(grid[column][row])) {
+            fill(column, row, grid[column][row]);
           }
           break;
         case SELECT:
-          grid[column][row].setSelected(!grid[column][row].isSelected());
+          if (selectedX1 < 0 && selectedY1 < 0) {
+            selectedX1 = column;
+            selectedY1 = row;
+            
+            if (selectedX2 < 0 && selectedY2 < 0) {
+              selectedX2 = column;
+              selectedY2 = row;
+            }
+          }
+          else {
+            selectedX2 = column;
+            selectedY2 = row;
+          }
+          
           repaint();
           break;
         default:

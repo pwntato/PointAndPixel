@@ -34,6 +34,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   
   private Map<String, Color> defaultColors = null;
   private Color selectedColor = new Color(0, 0, 0, 255);
+  private Color[][] copyBuffer = null;
   private ToolState toolState = ToolState.DRAW;
   
   private JTextField red = null;
@@ -220,18 +221,19 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       }
     }
     else if ("Draw Pixel".equals(e.getActionCommand())) {
-      canvas.deselectAll();
+      canvas.clearSelected();
       toolState = ToolState.DRAW;
     }
     else if ("Copy Color".equals(e.getActionCommand())) {
-      canvas.deselectAll();
+      canvas.clearSelected();
       toolState = ToolState.DROPPER;
     }
     else if ("Fill".equals(e.getActionCommand())) {
-      canvas.deselectAll();
+      canvas.clearSelected();
       toolState = ToolState.FILL;
     }
     else if ("Select Pixels".equals(e.getActionCommand())) {
+      canvas.clearSelected();
       toolState = ToolState.SELECT;
     }
     else if ("Show grid".equals(e.getActionCommand())) {
@@ -239,6 +241,12 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     }
     else if ("Show grid in export".equals(e.getActionCommand())) {
       canvas.setGridExportOn(gridExportOn.isSelected());
+    }
+    else if ("Copy".equals(e.getActionCommand())) {
+      copyBuffer = canvas.getSelected();
+    }
+    else if ("Paste".equals(e.getActionCommand())) {
+      canvas.pasteSelected(copyBuffer);
     }
     else if (defaultColors.keySet().contains(e.getActionCommand())) {
       setSelectedColor(defaultColors.get(e.getActionCommand()));
@@ -333,10 +341,16 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		
 		fileMenu.add(setupMenu("Exit"));
 		
+		JMenu editMenu = new JMenu("Edit");
+		menuBar.add(editMenu);
+				
+		editMenu.add(setupMenu("Copy"));	
+		editMenu.add(setupMenu("Paste"));	
+		
 		JMenu keyMenu = new JMenu("Settings");
 		menuBar.add(keyMenu);
 		
-		keyMenu.add(setupMenu("Pixel Size"));	
+		keyMenu.add(setupMenu("Pixel Size"));
 		keyMenu.add(setupMenu("Canvas Width"));	
 		keyMenu.add(setupMenu("Canvas Height"));	
 		fileMenu.addSeparator();	
@@ -366,7 +380,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   
   public void loadPixelFile(File file) {
     BufferedReader input = null; 
-    Pixel[][] grid = null;
+    Color[][] grid = null;
     
     try {      
       input = new BufferedReader(new FileReader(file));
@@ -388,7 +402,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       canvas.setWidthPixels(widthPixels);
       canvas.setHeightPixels(heightPixels);
       
-      grid = new Pixel[widthPixels][heightPixels];  
+      grid = new Color[widthPixels][heightPixels];  
       canvas.resizeWindow();    
       
       Pattern pixels = Pattern.compile("\\{\\S*\\}");
@@ -403,7 +417,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
         int bVal = getValue(pixel, "b"); 
         int aVal = getValue(pixel, "a");
         
-        grid[xVal][yVal] = new Pixel(new Color(rVal, gVal, bVal, aVal));
+        grid[xVal][yVal] = new Color(rVal, gVal, bVal, aVal);
       }
       
       canvas.setGrid(grid);
@@ -421,7 +435,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     Writer output = null;    
     
     try {      
-      Pixel[][] grid = canvas.getGrid();
+      Color[][] grid = canvas.getGrid();
       output = new BufferedWriter(new FileWriter(file));
 
       output.write("{\n");
@@ -435,7 +449,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       for (int column = 0; column < grid.length; column++) {
         for (int row = 0; row < grid[column].length; row++) {
           if (grid[column][row] != null) {
-            Color c = grid[column][row].getColor();
+            Color c = grid[column][row];
             if (!firstPixel) {
               output.write(",");
             }
@@ -484,11 +498,11 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       BufferedImage img = ImageIO.read(file);
       int widthPixels = img.getWidth() / canvas.getPixelSize();
       int heightPixels = img.getHeight() / canvas.getPixelSize();
-      Pixel[][] grid = new Pixel[widthPixels][heightPixels];
+      Color[][] grid = new Color[widthPixels][heightPixels];
       
       for (int column=0; column<widthPixels; column++) {
         for (int row=0; row<heightPixels; row++) {
-          grid[column][row] = new Pixel(getPixelColor(img, column, row));
+          grid[column][row] = getPixelColor(img, column, row);
         }
       }
       
