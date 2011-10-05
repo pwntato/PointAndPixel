@@ -9,7 +9,7 @@ import java.awt.event.*;
 
 import java.io.*;
 
-public class CanvasFrame extends JFrame {
+public class CanvasFrame extends JFrame implements KeyListener {
 
   private int height = 0;
   private int width = 0;
@@ -26,11 +26,14 @@ public class CanvasFrame extends JFrame {
     width = (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth();
 	
 	  canvas = new PixelCanvas(this, toolsWindow);
+	  canvas.addKeyListener(this);
 		JScrollPane scroller = new JScrollPane(canvas);  
     getContentPane().add(scroller);
     
 	  setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 	  addWindowListener(new WAdapter());
+	  
+	  addKeyListener(this);
 		
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -39,6 +42,52 @@ public class CanvasFrame extends JFrame {
   
   public PixelCanvas getCanvas() {
     return canvas;
+  }
+  
+  public void keyPressed(KeyEvent evt) {
+    if (evt.getModifiersEx() == 128) {
+      switch(evt.getKeyCode()) {
+        case 'S':
+          toolsWindow.save();
+          break;
+        case 'O':
+          toolsWindow.open();
+          break;
+        case 'N':
+          toolsWindow.newPixelCanvas();
+          break;
+        case 'C':
+          toolsWindow.copy();
+          break;
+        case 'V':
+          toolsWindow.paste();
+          break;
+        case 'I':
+          toolsWindow.importImage();
+          break;
+        case 'E':
+          toolsWindow.exportImage();
+          break;
+        case 'P':
+          toolsWindow.pixelSize();
+          break;
+        case 'H':
+          toolsWindow.height();
+          break;
+        case 'W':
+          toolsWindow.width();
+          break;
+        case 'Q':
+          System.exit(0);
+          break;
+      }
+    }
+  }
+
+  public void keyReleased(KeyEvent evt) {
+  }
+
+  public void keyTyped(KeyEvent evt) {
   }
   
   private class WAdapter extends WindowAdapter { 

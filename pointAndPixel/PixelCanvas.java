@@ -151,7 +151,7 @@ public class PixelCanvas extends JPanel implements FocusListener {
   }
   
   public void pasteSelected(Color[][] selected) {
-    if (selectedX < 0 && selectedY < 0) {
+    if ((selectedX < 0 && selectedY < 0) || selected == null) {
       return;
     }
     

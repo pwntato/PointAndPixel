@@ -141,84 +141,120 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     newPixelCanvas();
   }
   
-  public void actionPerformed(ActionEvent e) {
-    if ("Save".equals(e.getActionCommand())) {
-      int returnVal = selectPixelFile(false, saveFile);
+  public void save() {
+    int returnVal = selectPixelFile(false, saveFile);
       
-      if (returnVal == JFileChooser.APPROVE_OPTION) {
-        saveFile = fc.getSelectedFile();
-        savePixelFile(saveFile);
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+      saveFile = fc.getSelectedFile();
+      savePixelFile(saveFile);
+    }
+  }
+  
+  public void open() {
+    int returnVal = selectPixelFile(true, saveFile);
+    
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+      saveFile = fc.getSelectedFile();
+      loadPixelFile(saveFile);
+    }
+  }
+  
+  public void importImage() {
+    int returnVal = selectImageFile(true, null);
+    
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+      String response = JOptionPane.showInputDialog(null, "Pixel size", String.valueOf(canvas.getHeightPixels()));
+    
+      if (response != null) {
+        canvas.setPixelSize(Integer.parseInt(response));
+        importImage(fc.getSelectedFile());
       }
     }
-    else if ("Open".equals(e.getActionCommand())) {
-      int returnVal = selectPixelFile(true, saveFile);
+  }
+  
+  public void exportImage() {
+    String defaultName = "drawing.png";
+    if (saveFile != null) {
+      defaultName = saveFile.getName();
+      defaultName = defaultName.substring(0, defaultName.lastIndexOf(".")) + ".png";
+    }
+    int returnVal = selectImageFile(false, new File(defaultName));
+    
+    if (returnVal == JFileChooser.APPROVE_OPTION) {
+      exportImage(fc.getSelectedFile());
+    }
+  }
+  
+  public void pixelSize() {
+    String response = JOptionPane.showInputDialog(null, "Pixel Size", String.valueOf(canvas.getPixelSize()));
+    
+    if (response != null) {
+      canvas.setPixelSize(Integer.parseInt(response));
       
-      if (returnVal == JFileChooser.APPROVE_OPTION) {
-        saveFile = fc.getSelectedFile();
-        loadPixelFile(saveFile);
-      }
+      canvas.resizeWindow();
+      
+      repaint();
+    }
+  }
+  
+  public void height() {
+    String response = JOptionPane.showInputDialog(null, "Height in Pixels", String.valueOf(canvas.getHeightPixels()));
+    
+    if (response != null) {
+      canvas.setHeightPixels(Integer.parseInt(response));
+      
+      canvas.resizeGrid();
+      canvas.resizeWindow();
+      
+      repaint();
+    }
+  }
+  
+  public void width() {
+    String response = JOptionPane.showInputDialog(null,  "Width in Pixels", String.valueOf(canvas.getWidthPixels()));
+    
+    if (response != null) {
+      canvas.setWidthPixels(Integer.parseInt(response));
+      
+      canvas.resizeGrid();
+      canvas.resizeWindow();
+      
+      repaint();
+    }
+  }
+  
+  public void copy() {
+    copyBuffer = canvas.getSelected();
+  }
+  
+  public void paste() {
+    canvas.pasteSelected(copyBuffer);
+  }
+  
+  public void actionPerformed(ActionEvent e) {
+    if ("Save".equals(e.getActionCommand())) {
+      save();
+    }
+    else if ("Open".equals(e.getActionCommand())) {
+      open();
     }
     else if ("New".equals(e.getActionCommand())) {
       newPixelCanvas();
     }
     else if ("Import Image".equals(e.getActionCommand())) {
-      int returnVal = selectImageFile(true, null);
-      
-      if (returnVal == JFileChooser.APPROVE_OPTION) {
-        String response = JOptionPane.showInputDialog(null, "Pixel size", String.valueOf(canvas.getHeightPixels()));
-      
-        if (response != null) {
-          canvas.setPixelSize(Integer.parseInt(response));
-          importImage(fc.getSelectedFile());
-        }
-      }
+      importImage();
     }
     else if ("Export Image".equals(e.getActionCommand())) {
-      String defaultName = "drawing.png";
-      if (saveFile != null) {
-        defaultName = saveFile.getName();
-        defaultName = defaultName.substring(0, defaultName.lastIndexOf(".")) + ".png";
-      }
-      int returnVal = selectImageFile(false, new File(defaultName));
-      
-      if (returnVal == JFileChooser.APPROVE_OPTION) {
-        exportImage(fc.getSelectedFile());
-      }
+      exportImage();
     }
     else if ("Pixel Size".equals(e.getActionCommand())) {
-      String response = JOptionPane.showInputDialog(null, "Pixel Size", String.valueOf(canvas.getPixelSize()));
-      
-      if (response != null) {
-        canvas.setPixelSize(Integer.parseInt(response));
-        
-        canvas.resizeWindow();
-        
-        repaint();
-      }
+      pixelSize();
     }
     else if ("Canvas Width".equals(e.getActionCommand())) {
-      String response = JOptionPane.showInputDialog(null,  "Width in Pixels", String.valueOf(canvas.getWidthPixels()));
-      
-      if (response != null) {
-        canvas.setWidthPixels(Integer.parseInt(response));
-        
-        canvas.resizeGrid();
-        canvas.resizeWindow();
-        
-        repaint();
-      }
+      width();
     }
     else if ("Canvas Height".equals(e.getActionCommand())) {
-      String response = JOptionPane.showInputDialog(null, "Height in Pixels", String.valueOf(canvas.getHeightPixels()));
-      
-      if (response != null) {
-        canvas.setHeightPixels(Integer.parseInt(response));
-        
-        canvas.resizeGrid();
-        canvas.resizeWindow();
-        
-        repaint();
-      }
+      height();
     }
     else if ("Draw Pixel".equals(e.getActionCommand())) {
       canvas.clearSelected();
@@ -243,15 +279,15 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       canvas.setGridExportOn(gridExportOn.isSelected());
     }
     else if ("Copy".equals(e.getActionCommand())) {
-      copyBuffer = canvas.getSelected();
+      copy();
     }
     else if ("Paste".equals(e.getActionCommand())) {
-      canvas.pasteSelected(copyBuffer);
+      paste();
     }
     else if (defaultColors.keySet().contains(e.getActionCommand())) {
       setSelectedColor(defaultColors.get(e.getActionCommand()));
     }
-    else if ("Exit".equals(e.getActionCommand())) {
+    else if ("Quit".equals(e.getActionCommand())) {
       System.exit(0);
     }
     else {
@@ -330,29 +366,29 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		JMenu fileMenu = new JMenu("File");
 		menuBar.add(fileMenu);
 				
-		fileMenu.add(setupMenu("New"));	
-		fileMenu.add(setupMenu("Open"));		
-		fileMenu.add(setupMenu("Save"));	
+		fileMenu.add(setupMenu("New", KeyEvent.VK_N));	
+		fileMenu.add(setupMenu("Open", KeyEvent.VK_O));		
+		fileMenu.add(setupMenu("Save", KeyEvent.VK_S));	
 		fileMenu.addSeparator();		
 		
-		fileMenu.add(setupMenu("Import Image"));	
-		fileMenu.add(setupMenu("Export Image"));		
+		fileMenu.add(setupMenu("Import Image", KeyEvent.VK_I));	
+		fileMenu.add(setupMenu("Export Image", KeyEvent.VK_E));		
 		fileMenu.addSeparator();	
 		
-		fileMenu.add(setupMenu("Exit"));
+		fileMenu.add(setupMenu("Quit", KeyEvent.VK_Q));
 		
 		JMenu editMenu = new JMenu("Edit");
 		menuBar.add(editMenu);
 				
-		editMenu.add(setupMenu("Copy"));	
-		editMenu.add(setupMenu("Paste"));	
+		editMenu.add(setupMenu("Copy", KeyEvent.VK_C));	
+		editMenu.add(setupMenu("Paste", KeyEvent.VK_V));	
 		
 		JMenu keyMenu = new JMenu("Settings");
 		menuBar.add(keyMenu);
 		
-		keyMenu.add(setupMenu("Pixel Size"));
-		keyMenu.add(setupMenu("Canvas Width"));	
-		keyMenu.add(setupMenu("Canvas Height"));	
+		keyMenu.add(setupMenu("Pixel Size", KeyEvent.VK_P));
+		keyMenu.add(setupMenu("Canvas Width", KeyEvent.VK_W));	
+		keyMenu.add(setupMenu("Canvas Height", KeyEvent.VK_H));	
 		fileMenu.addSeparator();	
 		
 		gridOn = new JCheckBoxMenuItem("Show grid", true);
@@ -572,10 +608,11 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     }
   }
   
-  public JMenuItem setupMenu(String menuText) {
-		JMenuItem menuItem = new JMenuItem(menuText);
+  public JMenuItem setupMenu(String menuText, int keyEvent) {
+		JMenuItem menuItem = new JMenuItem(menuText, keyEvent);
 		menuItem.setActionCommand(menuText);
 		menuItem.addActionListener(this);
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(keyEvent, ActionEvent.CTRL_MASK));
 		return menuItem;
   }
   
