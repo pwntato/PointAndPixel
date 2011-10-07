@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import java.io.*;
+import java.util.*;
 
 public class CanvasFrame extends JFrame implements KeyListener {
 

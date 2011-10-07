@@ -416,7 +416,6 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   
   public void loadPixelFile(File file) {
     BufferedReader input = null; 
-    Color[][] grid = null;
     
     try {      
       input = new BufferedReader(new FileReader(file));
@@ -437,9 +436,10 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       canvas.setPixelSize(pixelSize);
       canvas.setWidthPixels(widthPixels);
       canvas.setHeightPixels(heightPixels);
+      canvas.resizeGrid();
       
-      grid = new Color[widthPixels][heightPixels];  
       canvas.resizeWindow();    
+      canvas.newHistorySpot();
       
       Pattern pixels = Pattern.compile("\\{\\S*\\}");
       Matcher matcher = pixels.matcher(json);
@@ -453,10 +453,9 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
         int bVal = getValue(pixel, "b"); 
         int aVal = getValue(pixel, "a");
         
-        grid[xVal][yVal] = new Color(rVal, gVal, bVal, aVal);
+        canvas.colorPixel(xVal, yVal, new Color(rVal, gVal, bVal, aVal));
       }
       
-      canvas.setGrid(grid);
     } catch (IOException e) {
       JOptionPane.showMessageDialog(this, "Unable to load drawing");
     }
@@ -534,17 +533,17 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       BufferedImage img = ImageIO.read(file);
       int widthPixels = img.getWidth() / canvas.getPixelSize();
       int heightPixels = img.getHeight() / canvas.getPixelSize();
-      Color[][] grid = new Color[widthPixels][heightPixels];
-      
-      for (int column=0; column<widthPixels; column++) {
-        for (int row=0; row<heightPixels; row++) {
-          grid[column][row] = getPixelColor(img, column, row);
-        }
-      }
       
       canvas.setWidthPixels(widthPixels);
       canvas.setHeightPixels(heightPixels);
-      canvas.setGrid(grid);
+      canvas.resizeGrid();
+      
+      for (int column=0; column<widthPixels; column++) {
+        for (int row=0; row<heightPixels; row++) {
+          canvas.colorPixel(column, row, getPixelColor(img, column, row));
+        }
+      }
+      
       canvas.resizeWindow();
     } 
     catch(Exception e) {

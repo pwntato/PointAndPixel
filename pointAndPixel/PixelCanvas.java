@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import java.io.*;
+import java.util.*;
 
 public class PixelCanvas extends JPanel implements FocusListener {
 
@@ -24,6 +25,9 @@ public class PixelCanvas extends JPanel implements FocusListener {
   
   private Color[][] grid = new Color[widthPixels][heightPixels];
   
+  private ArrayList<ArrayList<Action>> history = null;
+  private int historySpot = 0;
+  
   private int selectedX = -1;
   private int selectedY = -1;
   private int selectedX1 = -1;
@@ -34,6 +38,8 @@ public class PixelCanvas extends JPanel implements FocusListener {
   public PixelCanvas(JFrame frame, ToolsWindow toolsWindow) {
     this.frame = frame;
     this.toolsWindow = toolsWindow;
+    
+    history = new ArrayList<ArrayList<Action>>();
   
     addMouseListener(new MAdapter(this));
     setFocusable(true);
@@ -47,9 +53,22 @@ public class PixelCanvas extends JPanel implements FocusListener {
     setVisible(true);
   }
   
-  public void colorPixel(int column, int row) {
-    grid[column][row] = toolsWindow.getSelectedColor();
+  public void colorPixel(int column, int row, Color color) {
+    addToHistory(column, row, color);
+    grid[column][row] = color;
     repaint();
+  }
+  
+  public void colorPixel(int column, int row) {
+    colorPixel(column, row, toolsWindow.getSelectedColor());
+  }
+  
+  public void addToHistory(int column, int row, Color color) {
+    while (history.size() <= historySpot) {
+      history.add(new ArrayList<Action>());
+    }
+    
+    history.get(historySpot).add(new Action(column, row, color));
   }
   
   public void paint(Graphics g) {
@@ -95,7 +114,7 @@ public class PixelCanvas extends JPanel implements FocusListener {
     }
     else if ((grid[column][row] == null && clickedColor == null) 
           || (grid[column][row] != null && grid[column][row].equals(clickedColor))) {
-      grid[column][row] = toolsWindow.getSelectedColor();
+      colorPixel(column, row);
       
       fill(column - 1, row, clickedColor);
       fill(column + 1, row, clickedColor);
@@ -112,9 +131,11 @@ public class PixelCanvas extends JPanel implements FocusListener {
     
     repaint();
     
+    newHistorySpot();
+    
     for (int column=0; column<widthPixels; column++) {
       for (int row=0; row<heightPixels; row++) {
-        grid[column][row] = background;
+        colorPixel(column, row, background);
       }
     }    
     
@@ -125,9 +146,11 @@ public class PixelCanvas extends JPanel implements FocusListener {
     Color[][] oldGrid = grid;
     grid = new Color[widthPixels][heightPixels];
     
+    newHistorySpot();
+    
     for (int column=0; column<Math.min(widthPixels, oldGrid.length); column++) {
       for (int row=0; row<Math.min(heightPixels, oldGrid[0].length); row++) {
-        grid[column][row] = oldGrid[column][row];
+        colorPixel(column, row, oldGrid[column][row]);
       }
     }
     
@@ -155,10 +178,12 @@ public class PixelCanvas extends JPanel implements FocusListener {
       return;
     }
     
+    newHistorySpot();
+    
     for (int x = 0; x < selected.length - 1; x++) {
       for (int y = 0; y < selected[x].length - 1; y++) {
         if (selectedX + x < widthPixels && selectedY + y < heightPixels) {
-          grid[selectedX + x][selectedY + y] = selected[x][y];
+          colorPixel(selectedX + x, selectedY + y, selected[x][y]);
         }
       }
     }
@@ -174,6 +199,13 @@ public class PixelCanvas extends JPanel implements FocusListener {
     selectedY2 = -1;
     
     repaint();
+  }
+  
+  public void newHistorySpot() {
+    historySpot++;
+    if (history.size() > historySpot) {
+      history.set(historySpot, new ArrayList<Action>());
+    }
   }
   
   public void focusGained(FocusEvent e) {
