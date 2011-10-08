@@ -238,7 +238,7 @@ public class PixelCanvas extends JPanel implements FocusListener {
   
   public void resizeWindow() {
     setPreferredSize(new Dimension(widthPixels * pixelSize + 1, heightPixels * pixelSize + 1));
-    frame.setSize((int)((widthPixels + 0.5) * pixelSize), (int)((heightPixels + 2) * pixelSize));
+    frame.setSize(new Dimension(widthPixels * pixelSize + 6, heightPixels * pixelSize + 36));
   }
   
   public Color[][] getGrid() {

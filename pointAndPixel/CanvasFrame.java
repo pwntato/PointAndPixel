@@ -29,6 +29,8 @@ public class CanvasFrame extends JFrame implements KeyListener {
 	  canvas = new PixelCanvas(this, toolsWindow);
 	  canvas.addKeyListener(this);
 		JScrollPane scroller = new JScrollPane(canvas);  
+		//scroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		//scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
     getContentPane().add(scroller);
     
 	  setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
