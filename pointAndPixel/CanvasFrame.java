@@ -78,6 +78,9 @@ public class CanvasFrame extends JFrame implements KeyListener {
         case 'W':
           toolsWindow.width();
           break;
+        case 'Z':
+          canvas.undo();
+          break;
         case 'Q':
           System.exit(0);
           break;

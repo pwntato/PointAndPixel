@@ -284,6 +284,9 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     else if ("Paste".equals(e.getActionCommand())) {
       paste();
     }
+    else if ("Undo".equals(e.getActionCommand())) {
+      canvas.undo();
+    }
     else if (defaultColors.keySet().contains(e.getActionCommand())) {
       setSelectedColor(defaultColors.get(e.getActionCommand()));
     }
@@ -379,6 +382,9 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		
 		JMenu editMenu = new JMenu("Edit");
 		menuBar.add(editMenu);
+		
+		editMenu.add(setupMenu("Undo", KeyEvent.VK_Z));	
+		editMenu.addSeparator();	
 				
 		editMenu.add(setupMenu("Copy", KeyEvent.VK_C));	
 		editMenu.add(setupMenu("Paste", KeyEvent.VK_V));	
