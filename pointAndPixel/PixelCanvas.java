@@ -42,7 +42,6 @@ public class PixelCanvas extends JPanel implements FocusListener {
     setFocusable(true);
     addFocusListener(this);
     
-    //setBackground(Color.WHITE);
     resetGrid();
     
     resizeWindow();
@@ -238,6 +237,7 @@ public class PixelCanvas extends JPanel implements FocusListener {
   }
   
   public void resizeWindow() {
+    setPreferredSize(new Dimension(widthPixels * pixelSize + 1, heightPixels * pixelSize + 1));
     frame.setSize((int)((widthPixels + 0.5) * pixelSize), (int)((heightPixels + 2) * pixelSize));
   }
   
