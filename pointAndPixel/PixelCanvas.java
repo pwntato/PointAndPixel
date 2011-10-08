@@ -216,6 +216,8 @@ public class PixelCanvas extends JPanel implements FocusListener {
       Action revert = toUndo.get(i);
       colorPixel(revert.getX(), revert.getY(), revert.getPreviousColor());
     }
+    
+    repaint();
   }
   
   public boolean isGridOn() {
