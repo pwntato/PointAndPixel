@@ -38,7 +38,6 @@ public class CanvasFrame extends JFrame implements KeyListener {
 		
 		setLocationRelativeTo(null);
 		setVisible(true);
-		setResizable(false);      // worry about scaling later
   }
   
   public PixelCanvas getCanvas() {

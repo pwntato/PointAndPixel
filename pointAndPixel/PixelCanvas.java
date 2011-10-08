@@ -321,6 +321,10 @@ public class PixelCanvas extends JPanel implements FocusListener {
       int column = (int)(e.getX() / pixelSize);
       int row = (int)(e.getY() / pixelSize);
       
+      if (column >= widthPixels || row >= heightPixels) {
+        return;
+      }
+      
       canvas.setSelectedX(column);
       canvas.setSelectedY(row);
       
