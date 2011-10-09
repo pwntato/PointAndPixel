@@ -236,6 +236,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   
   public void copy() {
     copyBuffer = canvas.getSelected();
+    canvas.clearSelected();
   }
   
   public void paste() {
