@@ -25,8 +25,8 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   }
 
   public static final int DEFAULT_PIXEL_SIZE = 20;
-  public static final int DEFAULT_WIDTH_PIXELS = 20;
-  public static final int DEFAULT_HEIGHT_PIXELS = 20;
+  public static final int DEFAULT_WIDTH_PIXELS = 25;
+  public static final int DEFAULT_HEIGHT_PIXELS = 25;
 
   private Container container = null;
   private ArrayList<PixelCanvas> allCanvases = null;
@@ -60,7 +60,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     super("Pixel Tools");
     setDefaultCloseOperation(EXIT_ON_CLOSE);
     
-    setSize(200, 400);
+    setSize(175, 450);
 		setResizable(false);
     //setAlwaysOnTop(true);
     
@@ -595,7 +595,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		JDialog d = new JDialog(cf);
     d.setModalityType(Dialog.ModalityType.MODELESS);
     cf.setLocationRelativeTo(this);
-    cf.setLocation(470, 100);
+    cf.setLocation(440, 100);
 		cf.setVisible(true);
 		
     canvas = cf.getCanvas();
