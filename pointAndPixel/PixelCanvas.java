@@ -90,6 +90,8 @@ public class PixelCanvas extends JPanel implements FocusListener {
     }
     
     if (gridOn) {
+      g2d.drawRect(0, 0, widthPixels * pixelSize - 1, heightPixels * pixelSize - 1); 
+      
       for (int x = 0; x <= widthPixels; x++) {
         g2d.drawLine(x * pixelSize, 0, x * pixelSize, heightPixels * pixelSize);
       }
