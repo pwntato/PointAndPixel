@@ -108,7 +108,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		
 		JPanel pRed = new JPanel(new GridLayout(1, 2));
 		pRed.add(new JLabel("Red:", JLabel.RIGHT));
-		red = new JTextField(3);
+		red = new JTextField();
 		red.setText("0");
 		red.getDocument().addDocumentListener(this);
 		red.addFocusListener(this);
@@ -117,7 +117,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		
 		JPanel pGreen = new JPanel(new GridLayout(1, 2));
 		pGreen.add(new JLabel("Green:", JLabel.RIGHT));
-		green = new JTextField(3);
+		green = new JTextField();
 		green.setText("0");
 		green.getDocument().addDocumentListener(this);
 		green.addFocusListener(this);
@@ -126,7 +126,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		
 		JPanel pBlue = new JPanel(new GridLayout(1, 2));
 		pBlue.add(new JLabel("Blue:", JLabel.RIGHT));
-		blue = new JTextField(3);
+		blue = new JTextField();
 		blue.setText("0");
 		blue.getDocument().addDocumentListener(this);
 		blue.addFocusListener(this);
@@ -135,7 +135,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		
 		JPanel pAlpha = new JPanel(new GridLayout(1, 2));
 		pAlpha.add(new JLabel("Alpha:", JLabel.RIGHT));
-		alpha = new JTextField(3);
+		alpha = new JTextField();
 		alpha.setText("255");
 		alpha.getDocument().addDocumentListener(this);
 		alpha.addFocusListener(this);
@@ -353,17 +353,30 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   }
   
   public void insertUpdate(DocumentEvent e) {
+    int[] argb = intToARGB(selectedColor.getRGB());
+    
     try {
-      int redPart = Integer.parseInt(red.getText());
-      int greenPart = Integer.parseInt(green.getText());
-      int bluePart = Integer.parseInt(blue.getText());
-      int alphaPart = Integer.parseInt(alpha.getText());
-      
-      selectedColor = new Color(redPart, greenPart, bluePart, alphaPart);
-      
-      colorSample.setBackground(selectedColor);
+      argb[1] = Integer.parseInt(red.getText());
     }
-    catch (Exception ex) { ex.printStackTrace(); }
+    catch (Exception ex) {}
+    
+    try {
+      argb[2] = Integer.parseInt(green.getText());
+    }
+    catch (Exception ex) {}
+    
+    try {
+      argb[3] = Integer.parseInt(blue.getText());
+    }
+    catch (Exception ex) {}
+    
+    try {
+      argb[0] = Integer.parseInt(alpha.getText());
+    }
+    catch (Exception ex) {}
+    
+    selectedColor = new Color(argb[1], argb[2], argb[3], argb[0]);
+    colorSample.setBackground(selectedColor);
   }
     
   public void removeUpdate(DocumentEvent e) {}
