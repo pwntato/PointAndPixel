@@ -37,6 +37,11 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   private Color[][] copyBuffer = null;
   private ToolState toolState = ToolState.DRAW;
   
+  private JButton btnDrawPixel = null;
+  private JButton btnCopyColor = null;
+	private JButton btnFill = null;
+	private JButton btnSelectPixels = null;
+  
   private JTextField red = null;
   private JTextField green = null;
   private JTextField blue = null;
@@ -84,10 +89,16 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     container = getContentPane();
 		container.setLayout(new GridLayout(10, 1));
 		
-		container.add(setupButton("Draw Pixel"));
-		container.add(setupButton("Copy Color"));
-		container.add(setupButton("Fill"));
-		container.add(setupButton("Select Pixels"));
+		btnDrawPixel = setupButton("Draw Pixel");
+		container.add(btnDrawPixel);
+		btnCopyColor = setupButton("Copy Color");
+		container.add(btnCopyColor);
+		btnFill = setupButton("Fill");
+		container.add(btnFill);
+		btnSelectPixels = setupButton("Select Pixels");
+		container.add(btnSelectPixels);
+		
+		selectButton(btnDrawPixel);
 		
 		JPanel pColors = new JPanel(new GridLayout(2, 7));		
 		for (String colorName: defaultColors.keySet()) {
@@ -257,20 +268,16 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       height();
     }
     else if ("Draw Pixel".equals(e.getActionCommand())) {
-      canvas.clearSelected();
-      toolState = ToolState.DRAW;
+      setToolState(ToolState.DRAW);
     }
     else if ("Copy Color".equals(e.getActionCommand())) {
-      canvas.clearSelected();
-      toolState = ToolState.DROPPER;
+      setToolState(ToolState.DROPPER);
     }
     else if ("Fill".equals(e.getActionCommand())) {
-      canvas.clearSelected();
-      toolState = ToolState.FILL;
+      setToolState(ToolState.FILL);
     }
     else if ("Select Pixels".equals(e.getActionCommand())) {
-      canvas.clearSelected();
-      toolState = ToolState.SELECT;
+      setToolState(ToolState.SELECT);
     }
     else if ("Show grid".equals(e.getActionCommand())) {
       canvas.setGridOn(gridOn.isSelected());
@@ -623,6 +630,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   
   public JButton setupButton(String buttonText) {
 		JButton button = new JButton(buttonText);
+		button.setBackground(Color.LIGHT_GRAY);
 		button.setActionCommand(buttonText);
 		button.addActionListener(this);
 		return button;
@@ -666,12 +674,40 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     return argb;
   }
   
+  public void selectButton(JButton button) {
+    clearButtonSelections();
+    button.setBackground(Color.GRAY);
+  }
+  
+  public void clearButtonSelections() {
+    btnDrawPixel.setBackground(Color.LIGHT_GRAY);
+    btnCopyColor.setBackground(Color.LIGHT_GRAY);
+	  btnFill.setBackground(Color.LIGHT_GRAY);
+	  btnSelectPixels.setBackground(Color.LIGHT_GRAY);
+  }
+  
   public ToolState getToolState() {
     return toolState;
   }
   
   public void setToolState(ToolState toolState) {
+    canvas.clearSelected();
     this.toolState = toolState;
+    
+    switch(toolState) {
+      case DRAW:
+        selectButton(btnDrawPixel);
+        break;
+      case DROPPER:
+        selectButton(btnCopyColor);
+        break;
+      case FILL:
+        selectButton(btnFill);
+        break;
+      case SELECT:
+        selectButton(btnSelectPixels);
+        break;
+    }
   }
 }
 
