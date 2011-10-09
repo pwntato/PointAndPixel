@@ -564,6 +564,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       canvas.setWidthPixels(widthPixels);
       canvas.setHeightPixels(heightPixels);
       canvas.resizeGrid();
+      canvas.newHistorySpot();
       
       for (int column=0; column<widthPixels; column++) {
         for (int row=0; row<heightPixels; row++) {
