@@ -107,7 +107,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		container.add(pColors);		
 		
 		JPanel pRed = new JPanel(new GridLayout(1, 2));
-		pRed.add(new JLabel("Red:", JLabel.RIGHT));
+		pRed.add(new JLabel("<html><div align='right'>Red<br/>(0-255)</div></html>", JLabel.RIGHT));
 		red = new JTextField();
 		red.setText("0");
 		red.getDocument().addDocumentListener(this);
@@ -116,7 +116,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		container.add(pRed);
 		
 		JPanel pGreen = new JPanel(new GridLayout(1, 2));
-		pGreen.add(new JLabel("Green:", JLabel.RIGHT));
+		pGreen.add(new JLabel("<html><div align='right'>Green<br/>(0-255)</div></html>", JLabel.RIGHT));
 		green = new JTextField();
 		green.setText("0");
 		green.getDocument().addDocumentListener(this);
@@ -125,7 +125,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		container.add(pGreen);
 		
 		JPanel pBlue = new JPanel(new GridLayout(1, 2));
-		pBlue.add(new JLabel("Blue:", JLabel.RIGHT));
+		pBlue.add(new JLabel("<html><div align='right'>Blue<br/>(0-255)</div></html>", JLabel.RIGHT));
 		blue = new JTextField();
 		blue.setText("0");
 		blue.getDocument().addDocumentListener(this);
@@ -134,7 +134,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		container.add(pBlue);
 		
 		JPanel pAlpha = new JPanel(new GridLayout(1, 2));
-		pAlpha.add(new JLabel("Alpha:", JLabel.RIGHT));
+		pAlpha.add(new JLabel("<html><div align='right'>Alpha<br/>(0-255)</div></html>", JLabel.RIGHT));
 		alpha = new JTextField();
 		alpha.setText("255");
 		alpha.getDocument().addDocumentListener(this);
