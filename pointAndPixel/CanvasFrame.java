@@ -12,6 +12,8 @@ import java.util.*;
 
 public class CanvasFrame extends JFrame implements KeyListener {
 
+  public static final String TITLE = "Point and Pixel";
+
   private int height = 0;
   private int width = 0;
   
@@ -19,7 +21,7 @@ public class CanvasFrame extends JFrame implements KeyListener {
   private ToolsWindow toolsWindow = null;
   
   public CanvasFrame(ToolsWindow toolsWindow) {
-    super("Point and Pixel - Draw Old Timey Pixel Art");   
+    super(TITLE);   
     
     this.toolsWindow = toolsWindow;
 	  
@@ -29,8 +31,6 @@ public class CanvasFrame extends JFrame implements KeyListener {
 	  canvas = new PixelCanvas(this, toolsWindow);
 	  canvas.addKeyListener(this);
 		JScrollPane scroller = new JScrollPane(canvas);  
-		//scroller.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		//scroller.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
     getContentPane().add(scroller);
     
 	  setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);

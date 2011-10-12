@@ -52,8 +52,6 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   
   private JPanel colorSample = null;
   
-  private File saveFile = null;
-  
   private JFileChooser fc = null;
   
   public ToolsWindow() {
@@ -153,20 +151,33 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   }
   
   public void save() {
-    int returnVal = selectPixelFile(false, saveFile);
+    int returnVal = selectPixelFile(false, canvas.getSaveFile());
       
     if (returnVal == JFileChooser.APPROVE_OPTION) {
-      saveFile = fc.getSelectedFile();
-      savePixelFile(saveFile);
+      File picked = fc.getSelectedFile();
+      try {
+        if (!picked.getName().endsWith(".pixel")) {
+          picked = new File(picked.getCanonicalPath() + ".pixel");
+        }
+        
+        canvas.setSaveFile(picked);
+        savePixelFile(canvas.getSaveFile());
+        
+        canvas.getFrame().setTitle(picked.getName() + " - " + CanvasFrame.TITLE);
+        fc.setSelectedFile(new File(""));
+      }
+      catch (Exception ex) { ex.printStackTrace(); }
     }
   }
   
   public void open() {
-    int returnVal = selectPixelFile(true, saveFile);
+    int returnVal = selectPixelFile(true, canvas.getSaveFile());
     
     if (returnVal == JFileChooser.APPROVE_OPTION) {
-      saveFile = fc.getSelectedFile();
-      loadPixelFile(saveFile);
+      canvas.setSaveFile(fc.getSelectedFile());
+      loadPixelFile(canvas.getSaveFile());
+      canvas.getFrame().setTitle(canvas.getSaveFile().getName() + " - " + CanvasFrame.TITLE);
+      fc.setSelectedFile(new File(""));
     }
   }
   
@@ -179,20 +190,22 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
       if (response != null) {
         canvas.setPixelSize(Integer.parseInt(response));
         importImage(fc.getSelectedFile());
+        fc.setSelectedFile(new File(""));
       }
     }
   }
   
   public void exportImage() {
     String defaultName = "drawing.png";
-    if (saveFile != null) {
-      defaultName = saveFile.getName();
+    if (canvas.getSaveFile() != null) {
+      defaultName = canvas.getSaveFile().getName();
       defaultName = defaultName.substring(0, defaultName.lastIndexOf(".")) + ".png";
     }
     int returnVal = selectImageFile(false, new File(defaultName));
     
     if (returnVal == JFileChooser.APPROVE_OPTION) {
       exportImage(fc.getSelectedFile());
+      fc.setSelectedFile(new File(""));
     }
   }
   

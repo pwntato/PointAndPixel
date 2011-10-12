@@ -12,7 +12,7 @@ import java.util.*;
 
 public class PixelCanvas extends JPanel implements FocusListener {
 
-  private JFrame frame = null;
+  private CanvasFrame frame = null;
   private ToolsWindow toolsWindow = null;
 
   private boolean gridOn = true;
@@ -25,6 +25,7 @@ public class PixelCanvas extends JPanel implements FocusListener {
   
   private Color[][] grid = new Color[widthPixels][heightPixels];
   
+  private File saveFile = null;
   private ArrayList<Action> history = null;
   
   private int selectedX = -1;
@@ -34,7 +35,7 @@ public class PixelCanvas extends JPanel implements FocusListener {
   private int selectedX2 = -1;
   private int selectedY2 = -1;  
 
-  public PixelCanvas(JFrame frame, ToolsWindow toolsWindow) {
+  public PixelCanvas(CanvasFrame frame, ToolsWindow toolsWindow) {
     this.frame = frame;
     this.toolsWindow = toolsWindow;
   
@@ -306,6 +307,18 @@ public class PixelCanvas extends JPanel implements FocusListener {
   
   public void setSelectedY(int y) {
     selectedY = y;
+  }
+  
+  public File getSaveFile() {
+    return saveFile;
+  }
+  
+  public void setSaveFile(File saveFile) {
+    this.saveFile = saveFile;
+  }
+  
+  public CanvasFrame getFrame() {
+    return frame;
   }
 
   class MAdapter extends MouseAdapter 
