@@ -49,6 +49,7 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
   
   private JCheckBoxMenuItem gridOn = null;
   private JCheckBoxMenuItem gridExportOn = null;
+  private JCheckBoxMenuItem alwaysOnTop = null;
   
   private JPanel colorSample = null;
   
@@ -60,7 +61,6 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     
     setSize(175, 450);
 		setResizable(false);
-    //setAlwaysOnTop(true);
     
     defaultColors = new LinkedHashMap<String, Color>();
     
@@ -296,6 +296,9 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
     else if ("Show grid".equals(e.getActionCommand())) {
       canvas.setGridOn(gridOn.isSelected());
     }
+    else if ("Always on top".equals(e.getActionCommand())) {
+      setAlwaysOnTop(gridOn.isSelected());
+    }
     else if ("Show grid in export".equals(e.getActionCommand())) {
       canvas.setGridExportOn(gridExportOn.isSelected());
     }
@@ -440,6 +443,12 @@ public class ToolsWindow extends JFrame implements ActionListener, DocumentListe
 		gridExportOn.setActionCommand("Show grid in export");
 		gridExportOn.addActionListener(this);
 		keyMenu.add(gridExportOn);
+		keyMenu.addSeparator();
+		
+		alwaysOnTop = new JCheckBoxMenuItem("Always on top", false);
+		alwaysOnTop.setActionCommand("Always on top");
+		alwaysOnTop.addActionListener(this);
+		keyMenu.add(alwaysOnTop);
 				
 		setJMenuBar(menuBar);
   }
